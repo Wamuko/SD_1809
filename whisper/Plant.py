@@ -20,3 +20,9 @@ class Plant:
         self.luminosity_threshold = luminosity_threshold
         self.temperture_min_relax = temperture_min_relax
         self.temperture_max_relax = temperture_max_relax
+
+    """
+    Lineに出力すべきテキストを生成します
+    """
+    def chat(self):
+        return self.__speech_center

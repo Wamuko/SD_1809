@@ -5,6 +5,7 @@ import collections as cl
 
 DIR_DATA = "./data/user_data.json"
 
+
 class UserData:
     def __init__(self):
         base = os.path.dirname(os.path.abspath(__file__))
@@ -34,6 +35,9 @@ class UserData:
 
         self.save_json(ys)
 
+    def reanimate_plant(self, name):
+        pass
+
     def remove_plant(self, plant_name):
         ys = cl.OrderedDict()
         self.json_data["plant_names"].remove(plant_name)
@@ -45,6 +49,4 @@ class UserData:
         base = os.path.dirname(os.path.abspath(__file__))
         name = os.path.normpath(os.path.join(base, DIR_DATA))
         fw = open(name, 'w', encoding="utf-8")
-        json.dump(ys,fw,indent=4)
-
-
+        json.dump(ys, fw, indent=4)

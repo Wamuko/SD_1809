@@ -3,6 +3,7 @@ from UserData import UserData
 import random
 """
 ユーザからの問いかけに対して返答のTextを返す
+response_aiはthis[string] : 
 """
 
 
