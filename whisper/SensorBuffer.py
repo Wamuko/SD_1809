@@ -1,6 +1,6 @@
 from queue import Queue
 from socket import socket, AF_INET, SOCK_STREAM
-from sys
+import sys
 
 HOST = "localhost"
 PORT = 51000
@@ -36,7 +36,7 @@ class SensorBuffer:
                 __push_buffer(self.__humidity, hum)
                 __push_buffer(self.__temperture, tmp)
                 __push_buffer(self.__luminosity, lum)
-                            
+
             except UnicodeDecodeError as err:
                 continue
 
@@ -47,5 +47,5 @@ class SensorBuffer:
     def __push_buffer(buffer, data):
         if buffer.full():
             buffer.get()
-        
+
         buffer.put(data)
