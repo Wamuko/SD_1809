@@ -2,6 +2,8 @@
 import json
 import os
 import collections as cl
+from Plant import Plant
+from SpeechCenter import ExampleResponce
 
 DIR_DATA = "./data/user_data.json"
 
@@ -32,14 +34,13 @@ class UserData:
         ys = cl.OrderedDict()
         self.json_data["plant_names"].append(plant_name)
         ys = self.json_data
-        #print(self.json_data)
+        # print(self.json_data)
 
         self.save_json(ys)
-        # どこがjson_object?
         return self.__create_plant()
 
     def reanimate_plant(self, name):
-        pass
+        return self.__create_plant(self.json_data["plants"][name])
 
     def remove_plant(self, plant_name):
         ys = cl.OrderedDict()
@@ -55,4 +56,18 @@ class UserData:
             json.dump(ys, fw, indent=4)
 
     def __create_plant(self, json_object):
-        pass
+        kls = ExampleResponce
+        center = ExampleResponce()
+        ex = center.examples
+        ex["調子はどう？"] = kls.respond_health
+        ex["水はいる？"] = kls.respond_water_demand
+        ex["日当たりはどう？"] = kls.respond_light_demand
+        ex["気温はどう？"] = kls.respond_temperture
+
+        res = Plant(json_object["name"], None, ex,
+                    json_object["water_threshold"],
+                    json_object["luminosity_threshold"],
+                    json_object["temperture_min_relax"],
+                    json_object["temperture_max_relax"])
+
+        return res
