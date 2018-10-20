@@ -28,3 +28,7 @@ class PlantAnimator:
     # Lineのテキストを植物に伝え、応答を受け取ります
     def communicate(self, text):
         return self.__plant.chat(text)
+
+    # ユーザがビーコンの近くにいたら呼ばれます
+    def listen_beacon(self):
+        self.__plant.listen_beacon = True

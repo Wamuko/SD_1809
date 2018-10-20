@@ -13,7 +13,8 @@ class Plant:
                  water_threshold=WaterThreshold,
                  luminosity_threshold=LuminosityThreshold,
                  temperture_min_relax=TempertureMinRelax,
-                 temperture_max_relax=TempertureMaxRelax):
+                 temperture_max_relax=TempertureMaxRelax,
+                 listen_bieacon=False):
         self.display_name = display_name
         self.name = name
         self.__sensor_buf = sensor_buffer
@@ -22,6 +23,7 @@ class Plant:
         self.luminosity_threshold = luminosity_threshold
         self.temperture_min_relax = temperture_min_relax
         self.temperture_max_relax = temperture_max_relax
+        self.listen_bieacon = listen_bieacon
 
     # Lineに出力すべきテキストを生成します
     def chat(self, text):

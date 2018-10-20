@@ -29,7 +29,6 @@ from linebot.models import (
     TextComponent, SpacerComponent, IconComponent, ButtonComponent,
     SeparatorComponent, QuickReply, QuickReplyButton
 )
-from beaconWhisperEvent import BeaconWhisperEvent
 
 app = Flask(__name__)
 
@@ -53,9 +52,14 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 # ========================= whisper独自のフィールド ========================
 
 from UserData import UserData
+from PlantAnimator import PlantAnimator
+from beaconWhisperEvent import BeaconWhisperEvent
 
 user_data = UserData()
 current_plant = ""
+
+plant_animater = PlantAnimator(user_data)
+
 
 # =========================================================================
 
@@ -312,8 +316,34 @@ def handle_text_message(event):
                             action=LocationAction(label="label6")
                         ),
                     ])))
+    # ユーザからビーコンの設定を行う
     elif text == 'beacon':
         BeaconWhisperEvent(event.reply_token, line_bot_api, user_data).configBeaconMsg()
+    elif text == 'remove':
+        if current_plant is not None:
+            plant_animater.plant_delete(current_plant)
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(
+                    text=current_plant + 'を消去しました'
+                )
+            )
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(
+                    text='その名前の植物は存在しません'
+                )
+            )
+    elif text == 'create':
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(
+                text='植物の正式名を入力してください'
+            )
+        )
+        # この処理は工事中
+    
     else:
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text=event.message.text))
@@ -437,6 +467,7 @@ def handle_beacon(event):
             TextSendMessage(
                 text='おかえりなさい！'
                      ))
+        plant_animater.listen_beacon()
 
 
 if __name__ == "__main__":
