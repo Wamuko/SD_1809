@@ -21,8 +21,6 @@ class Plant:
         self.temperture_min_relax = temperture_min_relax
         self.temperture_max_relax = temperture_max_relax
 
-    """
-    Lineに出力すべきテキストを生成します
-    """
-    def chat(self):
-        return self.__speech_center
+    # Lineに出力すべきテキストを生成します
+    def chat(self, text):
+        return self.__speech_center.make_text(self, user_text=text)
