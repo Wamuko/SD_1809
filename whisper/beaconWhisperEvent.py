@@ -1,7 +1,4 @@
-import Sensor
-from SensorBuffer import SensorBuffer
 from UserData import UserData
-import random
 
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
@@ -51,10 +48,23 @@ class BeaconWhisperEvent:
         # ビーコンのOnとOffを変更する
         # なお、user_dataにbeacon_configがないと積む
         if react is 'set_beacon_on':
-            self.__user_data['use_line_beacon'] = 1
+            self.__user_data.json_data['use_line_beacon'] = 1
+            self.__line_bot_api.reply_message(
+                self.__reply_token,
+                TextSendMessage(
+                    text='BeaconをONに設定しました'
+                )
+            )
         elif react is 'set_beacon_off':
-            self.__user_data['use_line_beacon'] = 2
+            self.__user_data.json_data['use_line_beacon'] = 2
+            self.__line_bot_api.reply_message(
+                self.__reply_token,
+                TextSendMessage(
+                    text='BeaconをOFFに設定しました'
+                )
+            )
 
+    # beaconを使うかどうかを手動で設定する
     def configBeaconMsg(self):
             confirm_template = ConfirmTemplate(text="LINE beacon の設定を行います。Beacon Ecoを使用しますか？\nこれを用いることでスマホがビーコンから遠くにあるときはセンサを省エネ化し、センサ寿命を延ばすことができます。\nbeacon と話しかけると設定を変更できます。", actions=[
                 PostbackAction(label='Yes', data='set_beacon_on', displayText='はい！'),
@@ -63,3 +73,9 @@ class BeaconWhisperEvent:
             template_message = TemplateSendMessage(
                 alt_text='Confirm alt text', template=confirm_template)
             self.__line_bot_api.reply_message(self.__reply_token, template_message)
+
+    def readBeacon(self):
+        if self.__user_data.json_data['use_line_beacon'] is 1:
+            return True
+        else:
+            return False

@@ -431,13 +431,12 @@ def handle_postback(event):
 @handler.add(BeaconEvent)
 def handle_beacon(event):
     BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).activationMsg()
-    # line_bot_api.reply_message(
-    #     event.reply_token,
-        # TextSendMessage(
-            # text='Got beacon event. hwid={}, device_message(hex string)={}'.format(
-            #     event.beacon.hwid, event.beacon.dm)
-            # text='おかえりなさい！'
-            #     ))
+    if user_data.json_data['use_line_beacon'] is 1:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(
+                text='おかえりなさい！'
+                     ))
 
 
 if __name__ == "__main__":
