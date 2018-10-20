@@ -21,6 +21,10 @@ class PlantAnimator:
         self.__plant = None
         pass
 
+    # 植物と接続しているか確認します
+    def connecting(self):
+        return self.__plant is None
+
     # Lineのテキストを植物に伝え、応答を受け取ります
     def communicate(self, text):
         return self.__plant.chat(text)
