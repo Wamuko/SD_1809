@@ -23,4 +23,4 @@ class Plant:
 
     # Lineに出力すべきテキストを生成します
     def chat(self, text):
-        return self.__speech_center.make_text(self, user_text=text)
+        return self.__speech_center.make_response(self, user_text=text)

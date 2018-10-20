@@ -1,4 +1,5 @@
 from numpy import random
+import WeatherForecast
 
 
 class SpeechCenter:
@@ -8,11 +9,17 @@ class SpeechCenter:
 
 class ExampleResponce(SpeechCenter):
     def __init__(self):
-        self.examples = {}
+        klass = ExampleResponce
+        self.examples = {
+            "調子はどう？": klass.respond_health,
+            "水はいる？": klass.respond_water_demand,
+            "日当たりはどう？": klass.respond_light_demand,
+            "気温はどう？": klass.respond_temperture
+        }
 
     # 植物の状態に応じたテキストを生成します
     # TODO: ユーザーテキストが無い時のテキスト生成
-    def make_text(self, plant, user_text=None):
+    def make_response(self, plant, user_text=None):
         if user_text is None:
             return ""
         else:
