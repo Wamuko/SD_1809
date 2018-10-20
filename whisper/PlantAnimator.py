@@ -1,3 +1,4 @@
+
 """
 植物とLine側の「電話交換手」の役割を果たします
 また、そのほかのシステム的な機能を担います
@@ -9,8 +10,9 @@ class PlantAnimator:
         self.user_data = user_data
         self.__plant = None
 
-    def register_plant(self, ):
-        self.__plant = self.user_data.add_plant()
+    # 植物を生成します　memo: 引数にとりあえずdisplay_nameをいれておきます
+    def register_plant(self, display_name):
+        self.__plant = self.user_data.add_plant(display_name)
 
     def delete_plant(self, display_name):
         if self.__plant.display_name == display_name:
@@ -34,8 +36,9 @@ class PlantAnimator:
         return self.__plant.chat(text)
 
     # ユーザがビーコンの近くにいたら呼ばれます
-    def listen_beacon(self):
-        self.__plant.listen_beacon = True
+    def listen_beacon(self, now, beacon_config):
+        self.__plant.listen_beacon = (now, beacon_config)
+
     # 植物の状態の更新をします
     def update(self):
         self.__plant.update()

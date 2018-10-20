@@ -56,11 +56,12 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 from UserData import UserData
 from PlantAnimator import PlantAnimator
 from beaconWhisperEvent import BeaconWhisperEvent
+from datetime import datetime
 
 user_data = UserData()
 current_plant = ""
 
-plant_animater = PlantAnimator(user_data)
+plant_animator = PlantAnimator(user_data)
 
 
 # =========================================================================
@@ -126,11 +127,11 @@ def handle_text_message(event):
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
             line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text='...またね、今までありがとう'))
+                event.reply_token, TextSendMessage(text='またね、今までありがとう'))
             line_bot_api.leave_group(event.source.group_id)
         elif isinstance(event.source, SourceRoom):
             line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text='...またね、今までありがとう'))
+                event.reply_token, TextSendMessage(text='またね、今までありがとう'))
             line_bot_api.leave_room(event.source.room_id)
         else:
             line_bot_api.reply_message(
@@ -318,37 +319,62 @@ def handle_text_message(event):
                             action=LocationAction(label="label6")
                         ),
                     ])))
+
     # ユーザからビーコンの設定を行う
     elif text == 'beacon':
         BeaconWhisperEvent(event.reply_token, line_bot_api, user_data).configBeaconMsg()
-    elif text == 'remove':
+    
+    # 植物を削除するときの命令
+    elif text == 'remove' or text == 'delete':
         if current_plant is not None:
-            plant_animater.plant_delete(current_plant)
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(
-                    text=current_plant + 'を消去しました'
-                )
-            )
+            confirm_template = ConfirmTemplate(text= current_plant +"の情報を削除します\n本当によろしいですか？\n", actions=[
+                PostbackAction(label='Yes', data='delete_plant '+ current_plant, displayText='はい'),
+                PostbackAction(label='No', data='delete_plant_cancel '+ current_plant, displayText='いいえ'),
+            ])
         else:
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(
-                    text='その名前の植物は存在しません'
+                    text='植物が選択されていません'
                 )
             )
-    elif text == 'create':
+
+    elif text == 'disconnect' and current_plant is not None:
+        plant_animator.disconnect()
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextMessage(
+                text=current_plant + "：またね"
+            )
+        )
+
+    # 植物情報(plant)のアプデをかける
+    elif text == 'update':
+        plant_animator.update()
+        if current_plant is None:
+                    line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(
+                text='どの植物に呼びかけますか？'
+            )
+        )
+    # text.split()[0] in (create, register)
+    elif text.split()[0] in ('create', 'register'):
+        plant_animator.register_plant(text.split[1])
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(
-                text='植物の正式名を入力してください'
+                text='植物の名前を決めてあげてください！'
             )
         )
-        # この処理は工事中
-    
+
+        # この処理は工事中↑
+        # 方針としては一番最後にelse: で入れて、textを"create hoge"みたいに入れてもらってsplitして入れればい何とかなる（きもいけど）
+
     else:
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text=event.message.text))
+
 
 
 @handler.add(MessageEvent, message=LocationMessage)
@@ -458,7 +484,20 @@ def handle_postback(event):
         BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).setBeacon(event.postback.data)
     elif event.postback.data == 'set_beacon_off':
         BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).setBeacon(event.postback.data)
-
+    else: 
+        # 植物の名前を消すときにはワンクッション挟んであげる
+        data = event.postback.data.split()
+        if data[0] == 'delete_plant':
+            plant_animator.delete_plant(data[1])
+        elif data[0] == 'delete_plant_cancel':
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(
+                    text='ありがとう^^'
+                )
+            )
+    
+    
 
 @handler.add(BeaconEvent)
 def handle_beacon(event):
@@ -469,7 +508,7 @@ def handle_beacon(event):
             TextSendMessage(
                 text='おかえりなさい！'
                      ))
-        plant_animater.listen_beacon()
+        plant_animator.listen_beacon(datetime.now(), user_data.json_data['use_line_beacon'])
 
 import time
 

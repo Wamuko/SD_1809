@@ -70,6 +70,12 @@ class UserData:
         ys = self.json_data
         self.save_json(ys)
 
+    def set_use_line_beacon(self, use_line_beacon):
+        ys = cl.OrderedDict()
+        self.json_data["use_line_beacon"] = use_line_beacon
+        ys = self.json_data
+        self.save_json(ys)        
+
     def save_json(self, ys):
         # jsonに書き込み
         base = os.path.dirname(os.path.abspath(__file__))
