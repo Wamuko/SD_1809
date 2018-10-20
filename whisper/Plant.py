@@ -6,6 +6,7 @@ TempertureMaxRelax = 30
 
 class Plant:
     def __init__(self,
+                 display_name,
                  name,
                  sensor_buffer,
                  speech_center,
@@ -13,6 +14,7 @@ class Plant:
                  luminosity_threshold=LuminosityThreshold,
                  temperture_min_relax=TempertureMinRelax,
                  temperture_max_relax=TempertureMaxRelax):
+        self.display_name = display_name
         self.name = name
         self.__sensor_buf = sensor_buffer
         self.__speech_center = speech_center
@@ -23,4 +25,4 @@ class Plant:
 
     # Lineに出力すべきテキストを生成します
     def chat(self, text):
-        return self.__speech_center.make_text(self, user_text=text)
+        return self.__speech_center.make_response(self, user_text=text)
