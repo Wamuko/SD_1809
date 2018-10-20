@@ -1,5 +1,6 @@
 from collections import deque
 from socket import socket, AF_INET, SOCK_STREAM
+from datetime import datetime
 import threading
 import concurrent.futures as futures
 import sys
@@ -18,6 +19,7 @@ DEFAULT_FETCH_SPAN = 600
 class SensorBuffer:
     def __init__(self):
         self.fetch_span = DEFAULT_FETCH_SPAN
+        self.last_fetch_time = None
         self.__humidity = deque(maxlen=BUFFER_MAX_LEN)
         self.__luminosity = deque(maxlen=BUFFER_MAX_LEN)
         self.__sock = socket(AF_INET, SOCK_STREAM)
@@ -37,6 +39,7 @@ class SensorBuffer:
         return 700
 
     def start(self):
+        self.last_fetch_time = datetime.now()
         sock = self.__sock
         sock.bind((HOST, PORT))
         sock.listen(NUM_THREAD)
@@ -44,19 +47,22 @@ class SensorBuffer:
         print("start")
         global ProcessEnd
         while True:
-            try:
-                conn, addr = sock.accept()
-                byte_seq = conn.recv(RECV_BUFFER_SIZE)
-                hum, lum = map(int, byte_seq.decode().split())
-                push(self.__lock, self.__humidity, hum)
-                push(self.__lock, self.__luminosity, lum)
-                if ProcessEnd:
-                    break
-            except UnicodeDecodeError:
-                continue
+            unix_time_now = datetime.now().strftime('%s')
+            unix_time_last_fetch = self.last_fetch_time.strftime('%s')
+            if unix_time_now - unix_time_last_fetch > self.fetch_span:
+                try:
+                    conn, addr = sock.accept()
+                    byte_seq = conn.recv(RECV_BUFFER_SIZE)
+                    hum, lum = map(int, byte_seq.decode().split())
+                    push(self.__lock, self.__humidity, hum)
+                    push(self.__lock, self.__luminosity, lum)
+                    if ProcessEnd:
+                        break
+                except UnicodeDecodeError:
+                    continue
 
-            except Exception as ex:
-                print(str(ex), file=sys.stderr)
+                except Exception as ex:
+                    print(str(ex), file=sys.stderr)
 
         print("close (when only debug)", file=sys.stderr)
         sock.close()
