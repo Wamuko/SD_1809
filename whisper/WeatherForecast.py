@@ -5,7 +5,7 @@ from statistics import mean
 
 API_KEY = "2f9611d9fe751ad5525f69daf6b3e43f"
 API_URL = "http://api.openweathermap.org/data/2.5/forecast?zip={postal},JP&APPID={key}"
-WEATHER_RATE = {"Clear": 5, "Clouds": 1, "Rain": -5}
+WEATHER_RATE = {"Clear": 5, "Clouds": 1, "Rain": -5, "Snow": -50, "Extreme":-100}
 
 
 class WeatherForecast:

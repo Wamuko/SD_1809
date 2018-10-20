@@ -6,15 +6,15 @@ data = UserData()
 print(data.json_data)
 print(data.plant_exists("チューリップ"))
 print("\n")
-print(data.plant_exists("hoge"))
+print(data.plant_exists("チューリップちゃん"))
 print("\n")
 
-data.add_plant("花たち")
+data.add_plant("たんぽぽ")
 
 print(data.json_data)
-print(data.plant_names)
+print(data.plants)
 
 data.remove_plant("たんぽぽ")
 
 print(data.json_data)
-print(data.plant_names)
+print(data.plants)

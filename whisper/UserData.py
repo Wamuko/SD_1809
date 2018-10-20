@@ -13,7 +13,7 @@ class UserData:
         f = open(name, 'r', encoding="utf-8")
         self.json_data = json.load(f)
         self.postal_code = self.json_data["postal_code"]
-        self.plant_names = self.json_data["plant_names"]
+        self.plants = self.json_data["plants"]
 
     def load(self):
         base = os.path.dirname(os.path.abspath(__file__))
@@ -22,14 +22,30 @@ class UserData:
         data = json.load(f)
         return data
 
-    def plant_exists(self, plant_name):
+    def plant_exists(self, displayed_plant_name):
         # jsonデータの中にいるかチェック
-        return plant_name in self.plant_names
+        print(self.plants)
+        return self.plants.has_key(displayed_plant_name)
 
-    def add_plant(self, plant_name):
+    def add_plant(self, 
+                    displayed_plant_name, 
+                    name="", 
+                    water_threshold=600,
+                    luminosity_threshold=700,
+                    temperture_min_relax=15,
+                    temperture_max_relax=30):
         # 受け取った名前をリストに格納
         ys = cl.OrderedDict()
-        self.json_data["plant_names"].append(plant_name)
+        obj = { 
+            displayed_plant_name: {
+                "name": name, 
+                "water_threshold": water_threshold, 
+                "luminosity_threshold": luminosity_threshold,
+                "temperture_min_relax": temperture_min_relax,
+                "temperture_max_relax": temperture_max_relax
+            }
+        }
+        self.json_data["plants"].append(obj)
         ys = self.json_data
         #print(self.json_data)
 
@@ -38,9 +54,9 @@ class UserData:
     def reanimate_plant(self, name):
         pass
 
-    def remove_plant(self, plant_name):
+    def remove_plant(self, displayed_plant_name):
         ys = cl.OrderedDict()
-        self.json_data["plant_names"].remove(plant_name)
+        self.json_data["plants"] = self.json_data["plants"].pop(displayed_plant_name, None)
         ys = self.json_data
         self.save_json(ys)
 
