@@ -57,6 +57,12 @@ class UserData:
         ys = self.json_data
         self.save_json(ys)
 
+    def set_postal_code(self, postal_code):
+        ys = cl.OrderedDict()
+        self.json_data["postal_code"] = postal_code
+        ys = self.json_data
+        self.save_json(ys)
+
     def save_json(self, ys):
         # jsonに書き込み
         base = os.path.dirname(os.path.abspath(__file__))

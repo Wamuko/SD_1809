@@ -7,8 +7,11 @@ data = UserData()
 #print("\n")
 #print(data.plant_exists("チューリップちゃん"))
 #print("\n")
+print(data.json_data)
 
-data.add_plant("チューリップちゃん", name="チューリップ", water_threshold=700)
+data.add_plant("たんぽぽマン", name="たんぽぽ", water_threshold=650)
+
+print(data.json_data)
 
 #print(data.json_data)
 #print(data.plants)
@@ -17,4 +20,4 @@ data.add_plant("チューリップちゃん", name="チューリップ", water_t
 
 #print(data.json_data)
 #print(data.plants)
-print(data.json_data)
+#print(data.json_data)

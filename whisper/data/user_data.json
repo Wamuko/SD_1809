@@ -15,6 +15,13 @@
             "luminosity_threshold": 700,
             "temperture_min_relax": 15,
             "temperture_max_relax": 30
+        },
+        "\u305f\u3093\u307d\u307d\u30de\u30f3": {
+            "name": "\u305f\u3093\u307d\u307d",
+            "water_threshold": 650,
+            "luminosity_threshold": 700,
+            "temperture_min_relax": 15,
+            "temperture_max_relax": 30
         }
     }
 }
