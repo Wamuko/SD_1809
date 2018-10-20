@@ -24,7 +24,6 @@ class PlantAnimator:
     # 植物との接続を切断します
     def disconnect(self):
         self.__plant = None
-        pass
 
     # 植物と接続しているか確認します
     def connecting(self):
@@ -33,3 +32,7 @@ class PlantAnimator:
     # Lineのテキストを植物に伝え、応答を受け取ります
     def communicate(self, text):
         return self.__plant.chat(text)
+
+    # 植物の状態の更新をします
+    def update(self):
+        self.__plant.update()
