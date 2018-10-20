@@ -29,6 +29,7 @@ from linebot.models import (
     TextComponent, SpacerComponent, IconComponent, ButtonComponent,
     SeparatorComponent, QuickReply, QuickReplyButton
 )
+from beaconWhisperEvent import BeaconWhisperEvent
 
 app = Flask(__name__)
 
@@ -130,7 +131,7 @@ def handle_text_message(event):
                 event.reply_token,
                 TextSendMessage(text="ぼくはここから動けないよ..."))
     elif text == 'confirm':
-        confirm_template = ConfirmTemplate(text='これでいいですか?', actions=[
+        confirm_template = ConfirmTemplate(text='これでいい?', actions=[
             MessageAction(label='Yes', text='はい！'),
             MessageAction(label='No', text='いいえ'),
         ])
@@ -311,6 +312,8 @@ def handle_text_message(event):
                             action=LocationAction(label="label6")
                         ),
                     ])))
+    elif text == 'beacon':
+        BeaconWhisperEvent(event.reply_token, line_bot_api, user_data).configBeaconMsg()
     else:
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text=event.message.text))
@@ -419,17 +422,22 @@ def handle_postback(event):
     elif event.postback.data == 'date_postback':
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text=event.postback.params['date']))
+    elif event.postback.data == 'set_beacon_on':
+        BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).setBeacon(event.postback.data)
+    elif event.postback.data == 'set_beacon_off':
+        BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).setBeacon(event.postback.data)
 
 
 @handler.add(BeaconEvent)
 def handle_beacon(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(
+    BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).activationMsg()
+    # line_bot_api.reply_message(
+    #     event.reply_token,
+        # TextSendMessage(
             # text='Got beacon event. hwid={}, device_message(hex string)={}'.format(
             #     event.beacon.hwid, event.beacon.dm)
-            text='おかえりなさい！'
-                ))
+            # text='おかえりなさい！'
+            #     ))
 
 
 if __name__ == "__main__":
