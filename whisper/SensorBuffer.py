@@ -12,10 +12,12 @@ BUFFER_MAX_LEN = 10000
 RECV_BUFFER_SIZE = 1024
 
 ProcessEnd = False
+DEFAULT_FETCH_SPAN = 600
 
 
 class SensorBuffer:
     def __init__(self):
+        self.fetch_span = DEFAULT_FETCH_SPAN
         self.__humidity = deque(maxlen=BUFFER_MAX_LEN)
         self.__temperture = deque(maxlen=BUFFER_MAX_LEN)
         self.__luminosity = deque(maxlen=BUFFER_MAX_LEN)
