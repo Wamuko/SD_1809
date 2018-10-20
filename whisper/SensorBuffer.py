@@ -53,7 +53,6 @@ class SensorBuffer:
                 push(self.__lock, self.__humidity, hum)
                 push(self.__lock, self.__temperture, tmp)
                 push(self.__lock, self.__luminosity, lum)
-                print("end? = %s" % ProcessEnd, file=sys.stderr)
                 if ProcessEnd:
                     break
             except UnicodeDecodeError:
