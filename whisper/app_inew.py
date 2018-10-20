@@ -49,6 +49,15 @@ handler = WebhookHandler(channel_secret)
 
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
+# ========================= whisper独自のフィールド ========================
+
+from UserData import UserData
+
+user_data = UserData()
+current_plant = ""
+
+# =========================================================================
+
 
 # function for create tmp dir for download content
 def make_static_tmp_dir():
@@ -87,7 +96,13 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     text = event.message.text
-    print("hoge", file=sys.stderr)
+    
+    # 送られてきた言葉が植物の名前だった場合は、それをキャッシュし「なに？」と返す
+    if user_data.plant_exists(text):
+        current_plant = text
+        line_bot_api.reply_message(
+            event.reply_token, TextSendMessage(text='なに？'))
+    
     if text == 'profile':
         if isinstance(event.source, SourceUser):
             profile = line_bot_api.get_profile(event.source.user_id)
