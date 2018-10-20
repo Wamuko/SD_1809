@@ -19,7 +19,6 @@ class SensorBuffer:
     def __init__(self):
         self.fetch_span = DEFAULT_FETCH_SPAN
         self.__humidity = deque(maxlen=BUFFER_MAX_LEN)
-        self.__temperture = deque(maxlen=BUFFER_MAX_LEN)
         self.__luminosity = deque(maxlen=BUFFER_MAX_LEN)
         self.__sock = socket(AF_INET, SOCK_STREAM)
         self.__lock = threading.Lock()
@@ -33,9 +32,6 @@ class SensorBuffer:
 
         self.__lock.release()
         return ret
-
-    def get_temperture(self):
-        return 20
 
     def get_luminosity(self):
         return 700
@@ -51,9 +47,8 @@ class SensorBuffer:
             try:
                 conn, addr = sock.accept()
                 byte_seq = conn.recv(RECV_BUFFER_SIZE)
-                hum, tmp, lum = map(int, byte_seq.decode().split())
+                hum, lum = map(int, byte_seq.decode().split())
                 push(self.__lock, self.__humidity, hum)
-                push(self.__lock, self.__temperture, tmp)
                 push(self.__lock, self.__luminosity, lum)
                 if ProcessEnd:
                     break
