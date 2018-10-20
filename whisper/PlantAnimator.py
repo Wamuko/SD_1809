@@ -9,8 +9,13 @@ class PlantAnimator:
         self.user_data = user_data
         self.__plant = None
 
-    def create_plant(self, ):
-        pass
+    def register_plant(self, ):
+        self.__plant = self.user_data.add_plant()
+
+    def delete_plant(self, display_name):
+        if self.__plant.display_name == display_name:
+            self.disconnect()
+        self.user_data.remove_plant(display_name)
 
     # 要求された名前から対応する植物を再生します
     def connect(self, name):
@@ -19,7 +24,6 @@ class PlantAnimator:
     # 植物との接続を切断します
     def disconnect(self):
         self.__plant = None
-        pass
 
     # 植物と接続しているか確認します
     def connecting(self):
@@ -32,3 +36,6 @@ class PlantAnimator:
     # ユーザがビーコンの近くにいたら呼ばれます
     def listen_beacon(self):
         self.__plant.listen_beacon = True
+    # 植物の状態の更新をします
+    def update(self):
+        self.__plant.update()

@@ -4,6 +4,8 @@ import errno
 import os
 import sys
 import tempfile
+import concurrent.futures as futures
+
 from argparse import ArgumentParser
 
 from flask import Flask, request, abort
@@ -469,6 +471,16 @@ def handle_beacon(event):
                      ))
         plant_animater.listen_beacon()
 
+import time
+
+# should be modified when required
+def update():
+    plant_animator.update()
+
+def main_loop(clock_span):
+    while 1:
+        time.sleep(clock_span)
+        update()
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
@@ -481,4 +493,6 @@ if __name__ == "__main__":
     # create tmp dir for download content
     make_static_tmp_dir()
 
-    app.run(debug=options.debug, port=options.port)
+    with futures.ThreadPoolExecutor(2) as exec:
+        exec.submit(app.run, debug=options.debug, port=options.port )
+        exec.submit(main_loop, 1)

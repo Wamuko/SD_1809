@@ -25,6 +25,9 @@ class Plant:
         self.temperture_max_relax = temperture_max_relax
         self.listen_bieacon = listen_bieacon
 
+    def update(self):
+        pass
+
     # Lineに出力すべきテキストを生成します
     def chat(self, text):
         return self.__speech_center.make_response(self, user_text=text)
