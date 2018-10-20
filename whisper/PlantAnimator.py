@@ -1,5 +1,6 @@
 """
 植物とLine側の「電話交換手」の役割を果たします
+また、そのほかのシステム的な機能を担います
 """
 
 
@@ -8,9 +9,11 @@ class PlantAnimator:
         self.user_data = user_data
         self.__plant = None
 
-    """
-    要求された名前の植物
-    """
-
+    # 要求された名前から対応する植物を再生します
     def connect(self, name):
         self.__plant = self.user_data.reanimate_plant(name)
+
+    # 植物との接続を切断します
+    def disconnect(self):
+        self.__plant = None
+        pass
