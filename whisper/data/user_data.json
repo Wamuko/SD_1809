@@ -3,6 +3,7 @@
     "use_line_beacon": 0,
     "plants": {
         "\u30d9\u30e9\u30c9\u30f3\u30ca\u3055\u3093": {
+            "display_name": "\u30d9\u30e9\u30c9\u30f3\u30ca\u3055\u3093",
             "name": "\u30d9\u30e9\u30c9\u30f3\u30ca",
             "water_threshold": 700,
             "luminosity_threshold": 700,
@@ -10,6 +11,7 @@
             "temperture_max_relax": 30
         },
         "\u30c1\u30e5\u30fc\u30ea\u30c3\u30d7\u3061\u3083\u3093": {
+            "display_name": "\u30c1\u30e5\u30fc\u30ea\u30c3\u30d7\u3061\u3083\u3093",
             "name": "\u30c1\u30e5\u30fc\u30ea\u30c3\u30d7",
             "water_threshold": 700,
             "luminosity_threshold": 700,
@@ -17,6 +19,7 @@
             "temperture_max_relax": 30
         },
         "\u305f\u3093\u307d\u307d\u30de\u30f3": {
+            "display_name": "\u305f\u3093\u307d\u307d\u30de\u30f3",
             "name": "\u305f\u3093\u307d\u307d",
             "water_threshold": 650,
             "luminosity_threshold": 700,
