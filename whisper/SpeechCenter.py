@@ -9,13 +9,7 @@ class SpeechCenter:
 
 class ExampleResponce(SpeechCenter):
     def __init__(self):
-        klass = ExampleResponce
-        self.examples = {
-            "調子はどう？": klass.respond_health,
-            "水はいる？": klass.respond_water_demand,
-            "日当たりはどう？": klass.respond_light_demand,
-            "気温はどう？": klass.respond_temperture
-        }
+        self.examples = {}
 
     # 植物の状態に応じたテキストを生成します
     # TODO: ユーザーテキストが無い時のテキスト生成
