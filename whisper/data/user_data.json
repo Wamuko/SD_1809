@@ -1,15 +1,16 @@
 {
     "postal_code": "980-0871",
+    "use_line_beacon": 0,
     "plants": {
-        "チューリップちゃん": {
-            "name": "チューリップ",
-            "water_threshold": 600,
+        "\u30d9\u30e9\u30c9\u30f3\u30ca\u3055\u3093": {
+            "name": "\u30d9\u30e9\u30c9\u30f3\u30ca",
+            "water_threshold": 700,
             "luminosity_threshold": 700,
             "temperture_min_relax": 15,
             "temperture_max_relax": 30
         },
-        "ベラドンナさん": {
-            "name": "ベラドンナ",
+        "\u30c1\u30e5\u30fc\u30ea\u30c3\u30d7\u3061\u3083\u3093": {
+            "name": "\u30c1\u30e5\u30fc\u30ea\u30c3\u30d7",
             "water_threshold": 700,
             "luminosity_threshold": 700,
             "temperture_min_relax": 15,

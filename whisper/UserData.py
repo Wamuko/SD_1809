@@ -13,6 +13,7 @@ class UserData:
         f = open(name, 'r', encoding="utf-8")
         self.json_data = json.load(f)
         self.postal_code = self.json_data["postal_code"]
+        self.use_line_beacon = self.json_data["use_line_beacon"]
         self.plants = self.json_data["plants"]
 
     def load(self):
@@ -24,8 +25,7 @@ class UserData:
 
     def plant_exists(self, displayed_plant_name):
         # jsonデータの中にいるかチェック
-        print(self.plants)
-        return self.plants.has_key(displayed_plant_name)
+        return displayed_plant_name in self.plants
 
     def add_plant(self, 
                     displayed_plant_name, 
@@ -36,18 +36,14 @@ class UserData:
                     temperture_max_relax=30):
         # 受け取った名前をリストに格納
         ys = cl.OrderedDict()
-        obj = { 
-            displayed_plant_name: {
-                "name": name, 
-                "water_threshold": water_threshold, 
-                "luminosity_threshold": luminosity_threshold,
-                "temperture_min_relax": temperture_min_relax,
-                "temperture_max_relax": temperture_max_relax
-            }
+        self.json_data["plants"][displayed_plant_name] = {
+            "name": name, 
+            "water_threshold": water_threshold, 
+            "luminosity_threshold": luminosity_threshold,
+            "temperture_min_relax": temperture_min_relax,
+            "temperture_max_relax": temperture_max_relax
         }
-        self.json_data["plants"].append(obj)
         ys = self.json_data
-        #print(self.json_data)
 
         self.save_json(ys)
 
@@ -56,7 +52,8 @@ class UserData:
 
     def remove_plant(self, displayed_plant_name):
         ys = cl.OrderedDict()
-        self.json_data["plants"] = self.json_data["plants"].pop(displayed_plant_name, None)
+        if(displayed_plant_name in self.json_data["plants"]):
+            del(self.json_data["plants"][displayed_plant_name])
         ys = self.json_data
         self.save_json(ys)
 
