@@ -1,3 +1,5 @@
+from concurrent.futures import ThreadPoolExecutor
+
 WaterThreshold = 60
 LuminosityThreshold = 900
 TempertureMinRelax = 15
@@ -24,6 +26,9 @@ class Plant:
         self.temperture_min_relax = temperture_min_relax
         self.temperture_max_relax = temperture_max_relax
         self.listen_bieacon = listen_bieacon
+
+        executor = ThreadPoolExecutor(2)
+        self.__listening_thread = executor.submit(self.__sensor_buf.start)
 
     def update(self):
         pass
