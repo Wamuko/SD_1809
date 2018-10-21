@@ -1,4 +1,4 @@
-from numpy import random
+import numpy as np
 import WeatherForecast
 
 
@@ -32,7 +32,7 @@ class ExampleResponce(SpeechCenter):
 
         if not need_light and not need_water:
             response_msg += "元気だよ！"
-            if random.randrange(10) < 2:
+            if np.random.randrange(10) < 2:
                 response_msg += "\nいつもありがとう(^^)"
 
         return response_msg
