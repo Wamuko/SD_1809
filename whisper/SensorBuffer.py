@@ -23,20 +23,27 @@ class SensorBuffer:
         self.__humidity = deque(maxlen=BUFFER_MAX_LEN)
         self.__luminosity = deque(maxlen=BUFFER_MAX_LEN)
         self.__sock = socket(AF_INET, SOCK_STREAM)
-        self.__lock = threading.Lock()
 
     def get_humidity(self):
         """ return None or int"""
-        self.__lock.acquire()
-        ret = None
+        lock = threading.Lock()
+        lock.acquire()
+        ret = 0
         if len(self.__humidity) > 0:
             ret = self.__humidity[-1]
 
-        self.__lock.release()
+        lock.release()
         return ret
 
     def get_luminosity(self):
-        return 700
+        lock = threading.Lock()
+        lock.acquire()
+        ret = 0
+        if len(self.__luminosity) > 0:
+            ret = self.__luminosity[-1]
+
+        lock.release()
+        return ret
 
     def start(self):
         self.last_fetch_time = datetime.now()
