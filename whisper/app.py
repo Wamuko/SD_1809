@@ -59,10 +59,10 @@ from beaconWhisperEvent import BeaconWhisperEvent
 from datetime import datetime
 
 user_data = UserData()
-current_plant = ""
 
 plant_animator = PlantAnimator(user_data)
 
+user_id = "U70418518785e805318db128d8014710e"
 
 # =========================================================================
 
@@ -104,13 +104,25 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     text = event.message.text
+    split_msg = text.split(' ')
+    # current_plant = ""
+
+    # ユーザIDの取得
     
     # 送られてきた言葉が植物の名前だった場合は、それをキャッシュし「なに？」と返す
-    if user_data.plant_exists(text):
-        current_plant = text
-        line_bot_api.reply_message(
-            event.reply_token, TextSendMessage(text='なに？'))
+    # if user_data.plant_exists(text):
+    #     current_plant = text
+    #     line_bot_api.reply_message(
+    #         event.reply_token, TextSendMessage(text='なに？'))
     
+    # まずは現在アクティベートされている植物に対してCommunicateを投げる
+    com_msg = plant_animator.communicate(text)
+    if com_msg is not None:
+        line_bot_api.reply_message(
+                event.reply_token, 
+                    TextSendMessage(text=com_msg)
+            )
+
     if text == 'profile':
         if isinstance(event.source, SourceUser):
             profile = line_bot_api.get_profile(event.source.user_id)
@@ -323,13 +335,27 @@ def handle_text_message(event):
     # ユーザからビーコンの設定を行う
     elif text == 'beacon':
         BeaconWhisperEvent(event.reply_token, line_bot_api, user_data).configBeaconMsg()
-    
+
+    elif text == 'disconnect':
+        plant_animator.disconnect()
+
+
+    # 植物の生成を行う
+    elif split_msg[0] in ('create', 'register'):
+        if split_msg[1] is not None:
+            plant_animator.register_plant(text.split[1])
+
+    # 植物との接続命令
+    elif split_msg[0] in ('connect'):
+        if split_msg[1] is not None:
+            plant_animator.connect(text.split[1])
+
     # 植物を削除するときの命令
-    elif text == 'remove' or text == 'delete':
-        if current_plant is not None:
-            confirm_template = ConfirmTemplate(text= current_plant +"の情報を削除します\n本当によろしいですか？\n", actions=[
-                PostbackAction(label='Yes', data='delete_plant '+ current_plant, displayText='はい'),
-                PostbackAction(label='No', data='delete_plant_cancel '+ current_plant, displayText='いいえ'),
+    elif split_msg[0] in ('delete', 'eliminate', 'remove'):
+        if split_msg[1] is not None:        
+            confirm_template = ConfirmTemplate(text= split_msg[1] +"の情報を削除します\n本当によろしいですか？\n", actions=[
+                PostbackAction(label='Yes', data='delete_plant '+ split_msg[1], displayText='はい'),
+                PostbackAction(label='No', data='delete_plant_cancel '+ split_msg[1], displayText='いいえ'),
             ])
         else:
             line_bot_api.reply_message(
@@ -338,39 +364,6 @@ def handle_text_message(event):
                     text='植物が選択されていません'
                 )
             )
-
-    elif text == 'disconnect' and current_plant is not None:
-        plant_animator.disconnect()
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextMessage(
-                text=current_plant + "：またね"
-            )
-        )
-
-    # 植物情報(plant)のアプデをかける
-    elif text == 'update':
-        plant_animator.update()
-        if current_plant is None:
-                    line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(
-                text='どの植物に呼びかけますか？'
-            )
-        )
-    # text.split()[0] in (create, register)
-    elif text.split()[0] in ('create', 'register'):
-        plant_animator.register_plant(text.split[1])
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(
-                text='植物の名前を決めてあげてください！'
-            )
-        )
-
-        # この処理は工事中↑
-        # 方針としては一番最後にelse: で入れて、textを"create hoge"みたいに入れてもらってsplitして入れればい何とかなる（きもいけど）
-
     else:
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text=event.message.text))
@@ -498,23 +491,29 @@ def handle_postback(event):
             )
     
     
-
+# ビーコンがかざされたときに呼ばれる処理
 @handler.add(BeaconEvent)
 def handle_beacon(event):
-    BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).activationMsg()
-    if user_data.json_data['use_line_beacon'] is 1:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(
-                text='おかえりなさい！'
-                     ))
-        plant_animator.listen_beacon(datetime.now(), user_data.json_data['use_line_beacon'])
+    if plant_animator.listen_beacon_span(datetime.now().strftime('%s')):
+        BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).activationMsg()
+        if user_data.json_data['use_line_beacon'] is 1:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(
+                    text='おかえりなさい！'
+                         ))
+            plant_animator.listen_beacon(datetime.now().strftime('%s'), user_data.json_data['use_line_beacon'])
 
 import time
 
 # should be modified when required
 def update():
-    plant_animator.update()
+    feedback = plant_animator.update()
+    if feedback is not None:
+        line_bot_api.push_message(
+            user_id,
+            TextSendMessage(text=feedback)
+        )
 
 def main_loop(clock_span):
     while 1:
