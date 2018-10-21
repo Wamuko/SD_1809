@@ -76,7 +76,7 @@ class BeaconWhisperEvent:
                 alt_text='Confirm alt text', template=confirm_template)
             self.__line_bot_api.reply_message(self.__reply_token, template_message)
 
-    def readBeacon(self):
+    def readBeaconConfig(self):
         if self.__user_data.json_data['use_line_beacon'] is 1:
             return True
         else:

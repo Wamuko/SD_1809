@@ -348,16 +348,6 @@ def handle_text_message(event):
             )
         )
 
-    # 植物情報(plant)のアプデをかける
-    elif text == 'update':
-        plant_animator.update()
-        if current_plant is None:
-                    line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(
-                text='どの植物に呼びかけますか？'
-            )
-        )
     # text.split()[0] in (create, register)
     elif text.split()[0] in ('create', 'register'):
         plant_animator.register_plant(text.split[1])
@@ -498,17 +488,18 @@ def handle_postback(event):
             )
     
     
-
+# ビーコンがかざされたときに呼ばれる処理
 @handler.add(BeaconEvent)
 def handle_beacon(event):
-    BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).activationMsg()
-    if user_data.json_data['use_line_beacon'] is 1:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(
-                text='おかえりなさい！'
-                     ))
-        plant_animator.listen_beacon(datetime.now(), user_data.json_data['use_line_beacon'])
+    if plant_animator.listen_beacon_span(datetime.now().strftime('%s')):
+        BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).activationMsg()
+        if user_data.json_data['use_line_beacon'] is 1:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(
+                    text='おかえりなさい！'
+                         ))
+            plant_animator.listen_beacon(datetime.now().strftime('%s'), user_data.json_data['use_line_beacon'])
 
 import time
 

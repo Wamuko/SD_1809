@@ -33,8 +33,8 @@ class Plant:
 
     # ここでlisten_boecon(ビーコンが反応してから diff 現時刻, 設定がOn)なら1時間スパンにする(4時間の間)
     def update(self):
-        if 14400 < (datetime.now() - self.listen_bieacon[0]).strftime('%s') and self.listen_bieacon[1] is 1:
-            self.__sensor_buf.fetch_span = 12000
+        if 14401 < (datetime.now().strftime('%s') - self.listen_bieacon[0]).strftime('%s') and self.listen_bieacon[1] is 1:
+            self.__sensor_buf.fetch_span = 7200
         else:
             self.__sensor_buf.fetch_span = 600
 
