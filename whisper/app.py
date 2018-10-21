@@ -509,7 +509,7 @@ def update():
     if feedback is not None:
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=feedback)
+            TextSendMessage(text=feedback))
 
 def main_loop(clock_span):
     while 1:
