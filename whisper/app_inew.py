@@ -41,8 +41,8 @@ if channel_secret is None:
 if channel_access_token is None:
     print('Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.')
     sys.exit(1)
-print(channel_secret, file=sys.stderr)
-print(channel_access_token, file=sys.stderr)
+#print(channel_secret, file=sys.stderr)
+#print(channel_access_token, file=sys.stderr)
 
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
@@ -102,7 +102,7 @@ def handle_text_message(event):
         current_plant = text
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text='なに？'))
-    
+
     if text == 'profile':
         if isinstance(event.source, SourceUser):
             profile = line_bot_api.get_profile(event.source.user_id)
@@ -429,6 +429,9 @@ def handle_beacon(event):
             text='Got beacon event. hwid={}, device_message(hex string)={}'.format(
                 event.beacon.hwid, event.beacon.dm)))
 
+
+def main_loop():
+    pass
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(

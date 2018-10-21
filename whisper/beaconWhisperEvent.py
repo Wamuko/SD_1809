@@ -20,7 +20,10 @@ from linebot import (
     LineBotApi, WebhookHandler
 )
 
-
+"""
+Line beaconについての設定やコンフィグはこちらでやっています
+user_data.json_data['user_line_beacon'] {0 : 未設定, 1 : On, 2: Off}
+"""
 class BeaconWhisperEvent:
 
     def __init__(
@@ -46,9 +49,8 @@ class BeaconWhisperEvent:
 
     def setBeacon(self, react):
         # ビーコンのOnとOffを変更する
-        # なお、user_dataにbeacon_configがないと積む
         if react is 'set_beacon_on':
-            self.__user_data.json_data['use_line_beacon'] = 1
+            self.__user_data.set_use_line_beacon(1)
             self.__line_bot_api.reply_message(
                 self.__reply_token,
                 TextSendMessage(
@@ -56,7 +58,7 @@ class BeaconWhisperEvent:
                 )
             )
         elif react is 'set_beacon_off':
-            self.__user_data.json_data['use_line_beacon'] = 2
+            self.__user_data.set_use_line_beacon(2)
             self.__line_bot_api.reply_message(
                 self.__reply_token,
                 TextSendMessage(
@@ -67,7 +69,7 @@ class BeaconWhisperEvent:
     # beaconを使うかどうかを手動で設定する
     def configBeaconMsg(self):
             confirm_template = ConfirmTemplate(text="LINE beacon の設定を行います。Beacon Ecoを使用しますか？\nこれを用いることでスマホがビーコンから遠くにあるときはセンサを省エネ化し、センサ寿命を延ばすことができます。\nbeacon と話しかけると設定を変更できます。", actions=[
-                PostbackAction(label='Yes', data='set_beacon_on', displayText='はい！'),
+                PostbackAction(label='Yes', data='set_beacon_on', displayText='はい'),
                 PostbackAction(label='No', data='set_beacon_off', displayText='いいえ'),
             ])
             template_message = TemplateSendMessage(
