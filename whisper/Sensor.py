@@ -33,22 +33,19 @@ def read_mode():
 
 if __name__ == "__main__":
     sock = socket(AF_INET, SOCK_STREAM)
-    ser = serial.Serial("/dev/ttyACM0", 9600)
-    time.sleep(3)
-    data = []
-    histgram = {}
-    while 1:
-        conn, addr = sock.accept()
+    sock.connect((HOST, PORT))
 
-        # block
-        conn.recv(8)
+    ser = serial.Serial("/dev/ttyACM0", 9600)
+
+    time.sleep(3)
+
+    while 1:
+        sock.recv(8)
         ser.write((1).to_bytes(1, "big"))
-        time.sleep(0.2)
 
         # read humidity and luminosity
         hum, lum = read_mode()
 
         # send data
-        sock.connect((HOST, PORT))
         data = ("%d %d" % (hum, lum)).encode()
         sock.send(data)

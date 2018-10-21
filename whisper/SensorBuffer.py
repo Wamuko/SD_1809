@@ -43,6 +43,7 @@ class SensorBuffer:
         sock = self.__sock
         sock.bind((HOST, PORT))
         sock.listen(NUM_THREAD)
+        conn, addr = sock.accept()
         push = SensorBuffer.__push_data
         print("start")
         global ProcessEnd
@@ -51,7 +52,6 @@ class SensorBuffer:
             unix_time_last_fetch = self.last_fetch_time.strftime('%s')
             if unix_time_now - unix_time_last_fetch > self.fetch_span:
                 try:
-                    conn, addr = sock.accept()
                     byte_seq = conn.recv(RECV_BUFFER_SIZE)
                     hum, lum = map(int, byte_seq.decode().split())
                     push(self.__lock, self.__humidity, hum)
