@@ -8,16 +8,18 @@ TempertureMaxRelax = 30
 
 
 class Plant:
-    def __init__(self,
-                display_name,
-                name,
-                sensor_buffer,
-                speech_center,
-                water_threshold=WaterThreshold,
-                luminosity_threshold=LuminosityThreshold,
-                temperture_min_relax=TempertureMinRelax,
-                temperture_max_relax=TempertureMaxRelax,
-                listen_bieacon=(None, 0),):
+    def __init__(
+            self,
+            display_name,
+            name,
+            sensor_buffer,
+            speech_center,
+            water_threshold=WaterThreshold,
+            luminosity_threshold=LuminosityThreshold,
+            temperture_min_relax=TempertureMinRelax,
+            temperture_max_relax=TempertureMaxRelax,
+            listen_bieacon=(None, 0),
+    ):
         self.display_name = display_name
         self.name = name
         self.__sensor_buf = sensor_buffer
@@ -33,15 +35,17 @@ class Plant:
 
     # ここでlisten_boecon(ビーコンが反応してから diff 現時刻, 設定がOn)なら1時間スパンにする(4時間の間)
     def update(self):
-        if 14400 < (datetime.now() - self.listen_bieacon[0]).strftime('%s') and self.listen_bieacon[1] is 1:
+        if 14400 < (datetime.now() - self.listen_bieacon[0]
+                    ).strftime('%s') and self.listen_bieacon[1] is 1:
             self.__sensor_buf.fetch_span = 12000
         else:
             self.__sensor_buf.fetch_span = 600
+
+        return None
 
     # Lineに出力すべきテキストを生成します
     def chat(self, text):
         return self.__speech_center.make_response(self, user_text=text)
 
-    # 
-
-    
+    def report_weather_forecast(self, postal_code):
+        return self.__speech_center.report_weather_forecast(postal_code)

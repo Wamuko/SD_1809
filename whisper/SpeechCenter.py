@@ -1,5 +1,5 @@
 import numpy as np
-import WeatherForecast
+from WeatherForecast import WeatherForecast
 
 
 class SpeechCenter:
@@ -20,6 +20,13 @@ class ExampleResponce(SpeechCenter):
             return self.examples[user_text](plant)
         else:
             return "..?"
+
+    def report_weather_forecast(self, postal_code):
+        weather = WeatherForecast.get_weather(postal_code)
+        if WeatherForecast.calc_average(weather) > 0:
+            return "今日は天気がいいから外に出して"
+        else:
+            return "今日はあまり天気が良くないね"
 
     @staticmethod
     def respond_health(plant):
