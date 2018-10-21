@@ -6,18 +6,29 @@ HOST = "localhost"
 PORT = 51000
 
 REPEAT = range(5)
+DISCARD = range(20)
 
 
 def read_mode():
-    histgram = {}
+    hum_histgram = {}
+    lum_histgram = {}
     for i in REPEAT:
-        val = int(ser.readline())
-        if val in histgram:
-            histgram[val] = 0
+        hum, lum = map(int, ser.readline().decode().split())
+        for _ in DISCARD:
+            ser.readline()
+
+        if hum in hum_histgram:
+            hum_histgram[hum] = 0
         else:
-            histgram[val] += 1
-    max_v = max(histgram.values())
-    return histgram[max_v]
+            hum_histgram[hum] += 1
+
+        if lum in lum_histgram:
+            lum_histgram[lum] = 0
+        else:
+            lum_histgram[lum] += 1
+
+    return (max(hum_histgram, key=hum_histgram.get),
+            max(lum_histgram, key=lum_histgram.get))
 
 
 if __name__ == "__main__":
@@ -28,14 +39,14 @@ if __name__ == "__main__":
     histgram = {}
     while 1:
         conn, addr = sock.accept()
+
         # block
         conn.recv(8)
         ser.write((1).to_bytes(1, "big"))
         time.sleep(0.2)
 
         # read humidity and luminosity
-        hum = read_mode()
-        lum = read_mode()
+        hum, lum = read_mode()
 
         # send data
         sock.connect((HOST, PORT))
