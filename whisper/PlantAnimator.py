@@ -26,7 +26,7 @@ class PlantAnimator:
         if plant is None:
             return "その名前の植物はいません"
         else:
-            return "なに？"
+            return name + ": なに？"
 
     # 植物との接続を切断します
     def disconnect(self):
