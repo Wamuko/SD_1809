@@ -1,4 +1,4 @@
-from numpy import random
+from numpy import random as random
 import WeatherForecast
 
 
