@@ -37,7 +37,7 @@ class BeaconWhisperEvent:
 
     def activationMsg(self):
         # Lineビーコンが接続された場合、もし0:未設定なら設定プロセスを起動する
-        if self.__user_data['use_line_beacon'] is 0:
+        if self.__user_data.json_data['use_line_beacon'] is 0:
             confirm_template = ConfirmTemplate(text="LINE beacon が接続されたようです。Beacon Ecoを使用しますか？\nこれを用いることでスマホがビーコンから遠くにあるときはセンサを省エネ化し、センサ寿命を延ばすことができます。\nbeacon と話しかけると設定を変更できます。", actions=[
                 PostbackAction(label='Yes', data='set_beacon_on', displayText='はい！'),
                 PostbackAction(label='No', data='set_beacon_off', displayText='いいえ'),
