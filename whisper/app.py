@@ -59,7 +59,6 @@ from beaconWhisperEvent import BeaconWhisperEvent
 from datetime import datetime
 
 user_data = UserData()
-current_plant = ""
 
 plant_animator = PlantAnimator(user_data)
 
@@ -104,12 +103,14 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     text = event.message.text
+    # current_plant = ""
+
     
     # 送られてきた言葉が植物の名前だった場合は、それをキャッシュし「なに？」と返す
-    if user_data.plant_exists(text):
-        current_plant = text
-        line_bot_api.reply_message(
-            event.reply_token, TextSendMessage(text='なに？'))
+    # if user_data.plant_exists(text):
+    #     current_plant = text
+    #     line_bot_api.reply_message(
+    #         event.reply_token, TextSendMessage(text='なに？'))
     
     if text == 'profile':
         if isinstance(event.source, SourceUser):
@@ -323,13 +324,26 @@ def handle_text_message(event):
     # ユーザからビーコンの設定を行う
     elif text == 'beacon':
         BeaconWhisperEvent(event.reply_token, line_bot_api, user_data).configBeaconMsg()
-    
+
+    elif text == 'disconnect':
+        plant_animator.disconnect()
+
+    # 植物の生成を行う
+    elif text.split()[0] in ('create', 'register'):
+        if text.split()[1] is not None:
+            plant_animator.register_plant(text.split[1])
+
+    # 植物との接続命令
+    elif text.split()[0] in ('connect'):
+        if text.split()[1] is not None:
+            plant_animator.connect(text.split[1])
+
     # 植物を削除するときの命令
-    elif text == 'remove' or text == 'delete':
-        if current_plant is not None:
-            confirm_template = ConfirmTemplate(text= current_plant +"の情報を削除します\n本当によろしいですか？\n", actions=[
-                PostbackAction(label='Yes', data='delete_plant '+ current_plant, displayText='はい'),
-                PostbackAction(label='No', data='delete_plant_cancel '+ current_plant, displayText='いいえ'),
+    elif text.split()[0] in ('delete', 'eliminate', 'remove'):
+        if text.split()[1] is not None:        
+            confirm_template = ConfirmTemplate(text= text.split()[1] +"の情報を削除します\n本当によろしいですか？\n", actions=[
+                PostbackAction(label='Yes', data='delete_plant '+ text.split()[1], displayText='はい'),
+                PostbackAction(label='No', data='delete_plant_cancel '+ text.split()[1], displayText='いいえ'),
             ])
         else:
             line_bot_api.reply_message(
@@ -338,29 +352,6 @@ def handle_text_message(event):
                     text='植物が選択されていません'
                 )
             )
-
-    elif text == 'disconnect' and current_plant is not None:
-        plant_animator.disconnect()
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextMessage(
-                text=current_plant + "：またね"
-            )
-        )
-
-    # text.split()[0] in (create, register)
-    elif text.split()[0] in ('create', 'register'):
-        plant_animator.register_plant(text.split[1])
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(
-                text='植物の名前を決めてあげてください！'
-            )
-        )
-
-        # この処理は工事中↑
-        # 方針としては一番最後にelse: で入れて、textを"create hoge"みたいに入れてもらってsplitして入れればい何とかなる（きもいけど）
-
     else:
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text=event.message.text))
