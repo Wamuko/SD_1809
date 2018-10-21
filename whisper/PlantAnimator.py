@@ -22,13 +22,20 @@ class PlantAnimator:
 
     # 要求された名前から対応する植物を再生します
     def connect(self, name):
-        self.__plant = self.user_data.reanimate_plant(name)
+        self.__plant = plant = self.user_data.reanimate_plant(name)
+        if plant is None:
+            return "その名前の植物はいません"
+        else:
+            return "なに？"
 
     # 植物との接続を切断します
     def disconnect(self):
-        text = self.__plant.display_name + ": またね"
-        self.__plant = None
-        return text
+        if self.__plant == None:
+            return "植物が選択されてないよ"
+        else:
+            text = self.__plant.display_name + ": またね"
+            self.__plant = None
+            return text
 
     # 植物と接続しているか確認します
     def connecting(self):
