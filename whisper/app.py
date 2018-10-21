@@ -104,6 +104,7 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     text = event.message.text
+    split_msg = text.split(' ')
     # current_plant = ""
 
     # ユーザIDの取得
@@ -338,22 +339,23 @@ def handle_text_message(event):
     elif text == 'disconnect':
         plant_animator.disconnect()
 
+
     # 植物の生成を行う
-    elif text.split()[0] in ('create', 'register'):
-        if text.split()[1] is not None:
+    elif split_msg[0] in ('create', 'register'):
+        if split_msg[1] is not None:
             plant_animator.register_plant(text.split[1])
 
     # 植物との接続命令
-    elif text.split()[0] in ('connect'):
-        if text.split()[1] is not None:
+    elif split_msg[0] in ('connect'):
+        if split_msg[1] is not None:
             plant_animator.connect(text.split[1])
 
     # 植物を削除するときの命令
-    elif text.split()[0] in ('delete', 'eliminate', 'remove'):
-        if text.split()[1] is not None:        
-            confirm_template = ConfirmTemplate(text= text.split()[1] +"の情報を削除します\n本当によろしいですか？\n", actions=[
-                PostbackAction(label='Yes', data='delete_plant '+ text.split()[1], displayText='はい'),
-                PostbackAction(label='No', data='delete_plant_cancel '+ text.split()[1], displayText='いいえ'),
+    elif split_msg[0] in ('delete', 'eliminate', 'remove'):
+        if split_msg[1] is not None:        
+            confirm_template = ConfirmTemplate(text= split_msg[1] +"の情報を削除します\n本当によろしいですか？\n", actions=[
+                PostbackAction(label='Yes', data='delete_plant '+ split_msg[1], displayText='はい'),
+                PostbackAction(label='No', data='delete_plant_cancel '+ split_msg[1], displayText='いいえ'),
             ])
         else:
             line_bot_api.reply_message(
