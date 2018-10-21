@@ -62,6 +62,7 @@ user_data = UserData()
 
 plant_animator = PlantAnimator(user_data)
 
+user_id = "U70418518785e805318db128d8014710e"
 
 # =========================================================================
 
@@ -106,8 +107,6 @@ def handle_text_message(event):
     # current_plant = ""
 
     # ユーザIDの取得
-    @globals
-    user_id = event.source.user_id
     
     # 送られてきた言葉が植物の名前だった場合は、それをキャッシュし「なに？」と返す
     # if user_data.plant_exists(text):
@@ -116,7 +115,12 @@ def handle_text_message(event):
     #         event.reply_token, TextSendMessage(text='なに？'))
     
     # まずは現在アクティベートされている植物に対してCommunicateを投げる
-    plant_animator.communicate(text)
+    com_msg = plant_animator.communicate(text)
+    if com_msg is not None:
+        line_bot_api.reply_message(
+                event.reply_token, 
+                    TextSendMessage(text=com_msg)
+            )
 
     if text == 'profile':
         if isinstance(event.source, SourceUser):
