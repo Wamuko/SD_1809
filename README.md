@@ -1,6 +1,6 @@
 # whisper - 植物の「こえ」を聴く -
 
-[![whisper](img/whisper.jpg)](https://www.youtube.com/watch?v=G5rULR53uMk)
+[![whisper](img/whisper.jpg)](https://www.youtube.com/watch?v=s2UwXSxx6LA)
 
 ## 製品概要
 ### 園芸 × Tech
