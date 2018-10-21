@@ -16,8 +16,10 @@ class ExampleResponce(SpeechCenter):
     def make_response(self, plant, user_text=None):
         if user_text is None:
             return ""
-        else:
+        elif user_text in self.examples:
             return self.examples[user_text](plant)
+        else:
+            return "..?"
 
     @staticmethod
     def respond_health(plant):

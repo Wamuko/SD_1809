@@ -1,4 +1,3 @@
-
 """
 植物とLine側の「電話交換手」の役割を果たします
 また、そのほかのシステム的な機能を担います
@@ -25,7 +24,9 @@ class PlantAnimator:
 
     # 植物との接続を切断します
     def disconnect(self):
+        text = self.__plant.display_name + ": またね"
         self.__plant = None
+        return text
 
     # 植物と接続しているか確認します
     def connecting(self):
