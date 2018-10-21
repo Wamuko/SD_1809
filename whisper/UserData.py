@@ -19,6 +19,7 @@ class UserData:
             self.use_line_beacon = self.json_data["use_line_beacon"]
             self.plants = self.json_data["plants"]
 
+    # obsolete
     def load(self):
         base = os.path.dirname(os.path.abspath(__file__))
         name = os.path.normpath(os.path.join(base, DIR_DATA))
@@ -55,7 +56,10 @@ class UserData:
         return self.__create_plant(obj)
 
     def reanimate_plant(self, display_name):
-        return self.__create_plant(self.json_data["plants"][display_name])
+        if self.plant_exists(display_name):
+            return self.__create_plant(self.json_data["plants"][display_name])
+        else:
+            return None
 
     def remove_plant(self, displayed_plant_name):
         ys = cl.OrderedDict()
@@ -74,7 +78,7 @@ class UserData:
         ys = cl.OrderedDict()
         self.json_data["use_line_beacon"] = use_line_beacon
         ys = self.json_data
-        self.save_json(ys)        
+        self.save_json(ys)
 
     def save_json(self, ys):
         # jsonに書き込み
@@ -99,3 +103,11 @@ class UserData:
                     json_object["temperture_max_relax"])
 
         return res
+
+
+if __name__ == "__main__":
+    ud = UserData()
+    print(ud.plant_exists("チューリップちゃん"))
+    print(ud.reanimate_plant("チューリップちゃん"))
+
+    print(ud.reanimate_plant("チューリップちゃ"))
