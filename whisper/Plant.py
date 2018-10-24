@@ -8,18 +8,6 @@ TempertureMaxRelax = 30
 
 
 class Plant:
-    def __init__(
-            self,
-            display_name,
-            name,
-            sensor_buffer,
-            speech_center,
-            water_threshold=WaterThreshold,
-            luminosity_threshold=LuminosityThreshold,
-            temperture_min_relax=TempertureMinRelax,
-            temperture_max_relax=TempertureMaxRelax,
-            listen_bieacon=(None, 0),
-    ):
     def __init__(self,
                 display_name,
                 name,
@@ -62,7 +50,8 @@ class Plant:
         return self.__speech_center.report_weather_forecast(postal_code)
 
     def needWater(self):
-        pass
+        return self.__sensor_buf.get_humidity() >= 800
 
     def needLuminesity(self):
-        pass
+        return self.__sensor_buf.get_luminosity() < 750
+        
