@@ -56,7 +56,6 @@ class PlantAnimator:
     def listen_beacon_span(self, now):
         if self.__plant.listen_bieacon[0] is None or (
                 now - self.__plant.listen_bieacon[0]) < 3600:
-=======
         if self.__plant.listen_beacon[0] is None or (now - self.__plant.listen_beacon[0]) < 3600:
             return False
         else:
