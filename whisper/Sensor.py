@@ -1,9 +1,7 @@
 from socket import socket, AF_INET, SOCK_STREAM
+from port_setting import HOST, PORT
 import time
 import serial
-
-HOST = "localhost"
-PORT = 51000
 
 REPEAT = range(5)
 DISCARD = range(20)
