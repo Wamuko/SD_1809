@@ -10,6 +10,11 @@ class PlantAnimator:
         self.user_data = user_data
         self.__plant = None
         self.tell_weather = False
+        self.push_message = None
+
+    @property
+    def plant(self):
+        return self.__plant
 
     # 植物を生成します　memo: 引数にとりあえずdisplay_nameをいれておきます
     def register_plant(self, display_name):

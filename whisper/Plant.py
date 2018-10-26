@@ -29,6 +29,7 @@ class Plant:
         self.temperture_min_relax = temperture_min_relax
         self.temperture_max_relax = temperture_max_relax
         self.listen_beacon = listen_beacon
+        self.push_message = None
 
         executor = ThreadPoolExecutor(2)
         self.__listening_thread = executor.submit(self.__sensor_buf.start)
