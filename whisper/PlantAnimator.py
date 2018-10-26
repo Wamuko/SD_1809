@@ -18,7 +18,8 @@ class PlantAnimator:
 
     # 植物を生成します　memo: 引数にとりあえずdisplay_nameをいれておきます
     def register_plant(self, display_name):
-        self.__plant = self.user_data.add_plant(display_name)
+        pl = self.__plant = self.user_data.add_plant(display_name)
+        pl.push_message = self.push_message
 
     def delete_plant(self, display_name):
         if self.__plant.display_name == display_name:
@@ -31,11 +32,12 @@ class PlantAnimator:
         if plant is None:
             return "その名前の植物はいません"
         else:
+            plant.push_message = self.push_message
             return name + ": なに？"
 
     # 植物との接続を切断します
     def disconnect(self):
-        if self.__plant == None:
+        if self.__plant is None:
             return "植物が選択されてないよ"
         else:
             text = self.__plant.display_name + ": またね"
@@ -67,14 +69,14 @@ class PlantAnimator:
 
     # 植物の状態の更新をします
     def update(self):
-        feedback = self.__plant.update()
-        if datetime.now().hour == 0:
+        self.__plant.update()
+        hour = datetime.now().hour
+        if hour == 0:
             self.tell_weather = False
-        elif self.tell_weather and datetime.now().hour >= 6:
-            feedback = self.__report_weather_forecast()
+        elif self.tell_weather and hour >= 6:
+            self.__report_weather_forecast()
             self.tell_weather = True
-        return feedback
 
     def __report_weather_forecast(self):
         ud = self.user_data
-        return self.__plant.report_weather_forecast(ud.postal_code)
+        self.__plant.report_weather_forecast(ud.postal_code)

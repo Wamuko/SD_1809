@@ -48,8 +48,10 @@ class Plant:
     def chat(self, text):
         return self.__speech_center.make_response(self, user_text=text)
 
+    # 天気予報のメッセージをプッシュします
     def report_weather_forecast(self, postal_code):
-        return self.__speech_center.report_weather_forecast(postal_code)
+        self.push_message(
+            self.__speech_center.report_weather_forecast(postal_code))
 
     def needWater(self):
         return self.__sensor_buf.get_humidity() >= 800

@@ -508,12 +508,8 @@ import time
 
 # should be modified when required
 def update():
-    feedback = plant_animator.update()
-    if feedback is not None:
-        line_bot_api.push_message(
-            user_id,
-            TextSendMessage(text=feedback)
-        )
+    plant_animator.update()
+    
 
 def main_loop(clock_span):
     while 1:
@@ -531,6 +527,11 @@ if __name__ == "__main__":
     # create tmp dir for download content
     make_static_tmp_dir()
 
+    def push_message(msg):
+        line_bot_api.push_message(user_id, TextSendMessage(text=msg))
+
+    plant_animator.push_message = push_message
+
     with futures.ThreadPoolExecutor(2) as exec:
-        exec.submit(app.run, debug=options.debug, port=options.port )
+        exec.submit(app.run, debug=options.debug, port=options.port)
         exec.submit(main_loop, 1)
