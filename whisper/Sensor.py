@@ -1,10 +1,18 @@
-from socket import socket, AF_INET, SOCK_STREAM
-from port_setting import HOST, PORT
 import time
 import serial
 
 REPEAT = range(5)
 DISCARD = range(20)
+
+ser = serial.Serial("/dev/ttyACM0", 9600)
+
+
+def loop(conn):
+    while 1:
+        conn.recv()
+        ser.write((1).to_bytes(1, "big"))
+
+        conn.send(read_mode())
 
 
 def read_mode():
@@ -30,20 +38,4 @@ def read_mode():
 
 
 if __name__ == "__main__":
-    sock = socket(AF_INET, SOCK_STREAM)
-    sock.connect((HOST, PORT))
-
-    ser = serial.Serial("/dev/ttyACM0", 9600)
-
-    time.sleep(3)
-
-    while 1:
-        sock.recv(8)
-        ser.write((1).to_bytes(1, "big"))
-
-        # read humidity and luminosity
-        hum, lum = read_mode()
-
-        # send data
-        data = ("%d %d" % (hum, lum)).encode()
-        sock.send(data)
+    pass
