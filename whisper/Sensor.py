@@ -7,18 +7,29 @@ DISCARD = range(20)
 ser = serial.Serial("/dev/ttyACM0", 9600)
 
 
-def loop(conn):
+def debug_main():
     while 1:
-        conn.recv()
+        time.sleep(1)
         ser.write((1).to_bytes(1, "big"))
 
-        conn.send(read_mode())
+        print(read_mode())
+
+
+def loop(conn):
+    while 1:
+        msg = conn.recv()
+        if msg == "quit":
+            conn.close()
+            break
+        else:
+            ser.write((1).to_bytes(1, "big"))
+            conn.send(read_mode())
 
 
 def read_mode():
     hum_histgram = {}
     lum_histgram = {}
-    for i in REPEAT:
+    for _ in REPEAT:
         hum, lum = map(int, ser.readline().decode().split())
         for _ in DISCARD:
             ser.readline()
@@ -38,4 +49,4 @@ def read_mode():
 
 
 if __name__ == "__main__":
-    pass
+    debug_main()

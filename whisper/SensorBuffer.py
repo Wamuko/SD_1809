@@ -1,14 +1,18 @@
 from collections import deque
-from socket import socket, AF_INET, SOCK_STREAM
+# from socket import socket, AF_INET, SOCK_STREAM
 from datetime import datetime
 import threading
 import concurrent.futures as futures
 import sys
+import multiprocessing as mp
 import time
 
-HOST = "localhost"
-PORT = 51000
-NUM_THREAD = 2
+if not __name__ == "__main__":
+    import Sensor
+
+# HOST = "localhost"
+# PORT = 51000
+# NUM_THREAD = 2
 BUFFER_MAX_LEN = 10000
 RECV_BUFFER_SIZE = 1024
 
@@ -22,7 +26,7 @@ class SensorBuffer:
         self.last_fetch_time = None
         self.__humidity = deque(maxlen=BUFFER_MAX_LEN)
         self.__luminosity = deque(maxlen=BUFFER_MAX_LEN)
-        self.__sock = socket(AF_INET, SOCK_STREAM)
+        # self.__sock = socket(AF_INET, SOCK_STREAM)
         self.__lock = threading.Lock()
 
     def get_humidity(self):
@@ -46,15 +50,16 @@ class SensorBuffer:
         lock.release()
         return ret
 
-    def start(self):
+    def start(self, loop_func):
         print("thread start")
         self.last_fetch_time = int(datetime.now().strftime('%s'))
-        sock = self.__sock
-        sock.bind((HOST, PORT))
-        sock.listen(NUM_THREAD)
-        conn, addr = sock.accept()
-        push = SensorBuffer.__push_data
-        print("loop start")
+        parent_conn, child_conn = mp.Pipe()
+        child_proc = mp.Process(target=loop_func, args=(child_conn, ))
+        child_proc.start()
+        # sock = self.__sock
+        # sock.bind((HOST, PORT))
+        # sock.listen(NUM_THREAD)
+        # conn, addr = sock.accept()
         global ProcessEnd
 
         try:
@@ -63,16 +68,16 @@ class SensorBuffer:
                 if unix_time_now - self.last_fetch_time > self.fetch_span:
                     try:
                         self.last_fetch_time = unix_time_now
-                        conn.send((1).to_bytes(1, "big"))
-                        byte_seq = conn.recv(RECV_BUFFER_SIZE)
-                        hum, lum = map(int, byte_seq.decode().split())
-                        push(self.__humidity, hum)
-                        push(self.__luminosity, lum)
+                        parent_conn.send(b"1")
+                        # conn.send((1).to_bytes(1, "big"))
+                        # byte_seq = conn.recv(RECV_BUFFER_SIZE)
+                        # hum, lum = map(int, byte_seq.decode().split())
+                        hum, lum = parent_conn.recv()
+                        self.__push_data(self.__humidity, hum)
+                        self.__push_data(self.__luminosity, lum)
                         print("%d %d" % (hum, lum))
                         if ProcessEnd:
                             break
-                    except UnicodeDecodeError:
-                        continue
 
                     except Exception as ex:
                         print(str(ex), file=sys.stderr)
@@ -81,26 +86,30 @@ class SensorBuffer:
             print(ex, file=sys.stderr)
 
         print("close (when only debug)", file=sys.stderr)
-        sock.close()
+        parent_conn.send("quit")
+        parent_conn.close()
+        # sock.close()
 
-    @staticmethod
-    def __push_data(buffer, data):
-        lock = threading.Lock()
+    def __push_data(self, buffer, data):
+        lock = self.__lock
         lock.acquire()
         buffer.append(data)
         lock.release()
 
 
 if __name__ == "__main__":
+    from debug import pseudo_sensor
     buf = SensorBuffer()
-    buf.fetch_span = 2
+    buf.fetch_span = 1
 
     def producer():
-        buf.start()
+        buf.start(pseudo_sensor.loop)
 
     with futures.ThreadPoolExecutor(max_workers=2) as executor:
         pr = executor.submit(producer)
-        while pr.running():
-            pass
+
+        print("submit")
+
+        time.sleep(10)
 
         ProcessEnd = True
