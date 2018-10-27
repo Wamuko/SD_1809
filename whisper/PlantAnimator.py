@@ -4,6 +4,13 @@
 """
 from datetime import datetime
 
+from linebot.models import (
+    MessageEvent, TextMessage, TextSendMessage,
+)
+
+from linebot import (
+    LineBotApi, WebhookHandler,
+)
 
 class PlantAnimator:
     def __init__(self, user_data):
@@ -36,30 +43,44 @@ class PlantAnimator:
             return name + ": なに？"
 
     # 植物との接続を切断します
-    def disconnect(self):
+    def disconnect(self, line_bot_api, event):
         if self.__plant is None:
-            return "植物が選択されてないよ"
+            chat_text = "植物が選択されてないよ"
+            if chat_text is not None:
+                line_bot_api.reply_message(
+                event.reply_token, 
+                    TextSendMessage(text=chat_text)
+            )
         else:
-            text = self.__plant.display_name + ": またね"
+            chat_text = self.__plant.display_name + ": またね"
             self.__plant = None
-            return text
+            if chat_text is not None:
+                line_bot_api.reply_message(
+                event.reply_token, 
+                    TextSendMessage(text=chat_text)
+            )
 
     # 植物と接続しているか確認します
     def connecting(self):
         return self.__plant is None
 
     # Lineのテキストを植物に伝え、応答を受け取ります
-    def communicate(self, text):
+    def communicate(self, text, line_bot_api, event):
         if self.connecting():
-            return self.__plant.chat(text)
+            chat_text = self.__plant.chat(text)
+            if chat_text is not None:
+                line_bot_api.reply_message(
+                event.reply_token, 
+                    TextSendMessage(text=chat_text)
+            )
         else:
-            return None
+            pass
 
     # ユーザがビーコンの近くにいたら呼ばれます
     def listen_beacon(self, now, beacon_config):
         self.__plant.listen_beacon = (now, beacon_config)
 
-    # ユーザのビーコンが一度呼ばれたらそれから30分は呼ばれないようにするためのパーツ
+    # ユーザのビーコンが一度呼ばれたらそれから60分は呼ばれないようにするためのパーツ
     def listen_beacon_span(self, now):
         if self.__plant.listen_beacon[0] is None or (
                 now - self.__plant.listen_beacon[0]) < 3600:

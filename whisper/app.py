@@ -60,7 +60,7 @@ from datetime import datetime
 
 user_data = UserData()
 
-plant_animator = PlantAnimator(user_data)
+plant_animator = PlantAnimator(user_data, line_bot_api)
 
 user_id = "U70418518785e805318db128d8014710e"
 
@@ -116,14 +116,24 @@ def handle_text_message(event):
     #         event.reply_token, TextSendMessage(text='なに？'))
     
     # まずは現在アクティベートされている植物に対してCommunicateを投げる
-    com_msg = plant_animator.communicate(text)
-    if com_msg is not None:
-        line_bot_api.reply_message(
-                event.reply_token, 
-                    TextSendMessage(text=com_msg)
-            )
+    plant_animator.communicate(text, line_bot_api, event)
 
-    if text == 'profile':
+    if text == 'bye':
+        if isinstance(event.source, SourceGroup):
+            line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='またね、今までありがとう'))
+            line_bot_api.leave_group(event.source.group_id)
+        elif isinstance(event.source, SourceRoom):
+            line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='またね、今までありがとう'))
+            line_bot_api.leave_room(event.source.room_id)
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="この会話から退出させることはできません"))
+
+    """
+    elif text == 'profile':
         if isinstance(event.source, SourceUser):
             profile = line_bot_api.get_profile(event.source.user_id)
             line_bot_api.reply_message(
@@ -136,20 +146,7 @@ def handle_text_message(event):
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text="「ユーザIDがないとこのコマンドは使えません」"))
-    elif text == 'bye':
-        if isinstance(event.source, SourceGroup):
-            line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text='またね、今までありがとう'))
-            line_bot_api.leave_group(event.source.group_id)
-        elif isinstance(event.source, SourceRoom):
-            line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text='またね、今までありがとう'))
-            line_bot_api.leave_room(event.source.room_id)
-        else:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text="ぼくはここから動けないよ..."))
-    elif text == 'confirm':
+        elif text == 'confirm':
         confirm_template = ConfirmTemplate(text='これでいい?', actions=[
             MessageAction(label='Yes', text='はい！'),
             MessageAction(label='No', text='いいえ'),
@@ -331,13 +328,13 @@ def handle_text_message(event):
                             action=LocationAction(label="label6")
                         ),
                     ])))
-
+    """
     # ユーザからビーコンの設定を行う
     elif text == 'beacon':
         BeaconWhisperEvent(event.reply_token, line_bot_api, user_data).configBeaconMsg()
 
     elif text == 'disconnect':
-        plant_animator.disconnect()
+        plant_animator.disconnect(line_bot_api, event)
 
 
     # 植物の生成を行う
@@ -474,6 +471,7 @@ def handle_postback(event):
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text=event.postback.params['date']))
     elif event.postback.data == 'set_beacon_on':
+        # ビーコンを使うかどうかを設定するときの"YES", "No"を押したときの挙動を設定
         BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).setBeacon(event.postback.data)
     elif event.postback.data == 'set_beacon_off':
         BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).setBeacon(event.postback.data)
@@ -494,7 +492,7 @@ def handle_postback(event):
 # ビーコンがかざされたときに呼ばれる処理
 @handler.add(BeaconEvent)
 def handle_beacon(event):
-    if plant_animator.listen_beacon_span(datetime.now().strftime('%s')):
+    if plant_animator.listen_beacon_span(int(datetime.now().strftime('%s'))):
         BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).activationMsg()
         if user_data.json_data['use_line_beacon'] is 1:
             line_bot_api.reply_message(
