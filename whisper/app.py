@@ -61,6 +61,7 @@ from datetime import datetime
 user_data = UserData()
 
 plant_animator = PlantAnimator(user_data, line_bot_api)
+beacon_whisper_event = BeaconWhisperEvent(line_bot_api,user_data)
 
 user_id = "U70418518785e805318db128d8014710e"
 
@@ -116,7 +117,7 @@ def handle_text_message(event):
     #         event.reply_token, TextSendMessage(text='なに？'))
     
     # まずは現在アクティベートされている植物に対してCommunicateを投げる
-    plant_animator.communicate(text, line_bot_api, event)
+    plant_animator.communicate(text, event)
 
     if text == 'bye':
         if isinstance(event.source, SourceGroup):
@@ -132,209 +133,12 @@ def handle_text_message(event):
                 event.reply_token,
                 TextSendMessage(text="この会話から退出させることはできません"))
 
-    """
-    elif text == 'profile':
-        if isinstance(event.source, SourceUser):
-            profile = line_bot_api.get_profile(event.source.user_id)
-            line_bot_api.reply_message(
-                event.reply_token, [
-                    TextSendMessage(text='なまえ: ' + profile.display_name),
-                    TextSendMessage(text='一言: ' + profile.status_message)
-                ]
-            )
-        else:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text="「ユーザIDがないとこのコマンドは使えません」"))
-        elif text == 'confirm':
-        confirm_template = ConfirmTemplate(text='これでいい?', actions=[
-            MessageAction(label='Yes', text='はい！'),
-            MessageAction(label='No', text='いいえ'),
-        ])
-        template_message = TemplateSendMessage(
-            alt_text='Confirm alt text', template=confirm_template)
-        line_bot_api.reply_message(event.reply_token, template_message)
-    elif text == 'buttons':
-        buttons_template = ButtonsTemplate(
-            title='My buttons sample', text='Hello, my buttons', actions=[
-                URIAction(label='Go to line.me', uri='https://line.me'),
-                PostbackAction(label='ping', data='ping'),
-                PostbackAction(label='ping with text', data='ping', text='ping'),
-                MessageAction(label='Translate Rice', text='米')
-            ])
-        template_message = TemplateSendMessage(
-            alt_text='Buttons alt text', template=buttons_template)
-        line_bot_api.reply_message(event.reply_token, template_message)
-    elif text == 'carousel':
-        carousel_template = CarouselTemplate(columns=[
-            CarouselColumn(text='hoge1', title='fuga1', actions=[
-                URIAction(label='Go to line.me', uri='https://line.me'),
-                PostbackAction(label='ping', data='ping')
-            ]),
-            CarouselColumn(text='hoge2', title='fuga2', actions=[
-                PostbackAction(label='ping with text', data='ping', text='ping'),
-                MessageAction(label='Translate Rice', text='米')
-            ]),
-        ])
-        template_message = TemplateSendMessage(
-            alt_text='Carousel alt text', template=carousel_template)
-        line_bot_api.reply_message(event.reply_token, template_message)
-    elif text == 'image_carousel':
-        image_carousel_template = ImageCarouselTemplate(columns=[
-            ImageCarouselColumn(image_url='https://via.placeholder.com/1024x1024',
-                                action=DatetimePickerAction(label='datetime',
-                                                            data='datetime_postback',
-                                                            mode='datetime')),
-            ImageCarouselColumn(image_url='https://via.placeholder.com/1024x1024',
-                                action=DatetimePickerAction(label='date',
-                                                            data='date_postback',
-                                                            mode='date'))
-        ])
-        template_message = TemplateSendMessage(
-            alt_text='ImageCarousel alt text', template=image_carousel_template)
-        line_bot_api.reply_message(event.reply_token, template_message)
-    elif text == 'imagemap':
-        pass
-    elif text == 'flex':
-        bubble = BubbleContainer(
-            direction='ltr',
-            hero=ImageComponent(
-                url='https://example.com/cafe.jpg',
-                size='full',
-                aspect_ratio='20:13',
-                aspect_mode='cover',
-                action=URIAction(uri='http://example.com', label='label')
-            ),
-            body=BoxComponent(
-                layout='vertical',
-                contents=[
-                    # title
-                    TextComponent(text='Brown Cafe', weight='bold', size='xl'),
-                    # review
-                    BoxComponent(
-                        layout='baseline',
-                        margin='md',
-                        contents=[
-                            IconComponent(size='sm', url='https://example.com/gold_star.png'),
-                            IconComponent(size='sm', url='https://example.com/grey_star.png'),
-                            IconComponent(size='sm', url='https://example.com/gold_star.png'),
-                            IconComponent(size='sm', url='https://example.com/gold_star.png'),
-                            IconComponent(size='sm', url='https://example.com/grey_star.png'),
-                            TextComponent(text='4.0', size='sm', color='#999999', margin='md',
-                                          flex=0)
-                        ]
-                    ),
-                    # info
-                    BoxComponent(
-                        layout='vertical',
-                        margin='lg',
-                        spacing='sm',
-                        contents=[
-                            BoxComponent(
-                                layout='baseline',
-                                spacing='sm',
-                                contents=[
-                                    TextComponent(
-                                        text='Place',
-                                        color='#aaaaaa',
-                                        size='sm',
-                                        flex=1
-                                    ),
-                                    TextComponent(
-                                        text='Shinjuku, Tokyo',
-                                        wrap=True,
-                                        color='#666666',
-                                        size='sm',
-                                        flex=5
-                                    )
-                                ],
-                            ),
-                            BoxComponent(
-                                layout='baseline',
-                                spacing='sm',
-                                contents=[
-                                    TextComponent(
-                                        text='Time',
-                                        color='#aaaaaa',
-                                        size='sm',
-                                        flex=1
-                                    ),
-                                    TextComponent(
-                                        text="10:00 - 23:00",
-                                        wrap=True,
-                                        color='#666666',
-                                        size='sm',
-                                        flex=5,
-                                    ),
-                                ],
-                            ),
-                        ],
-                    )
-                ],
-            ),
-            footer=BoxComponent(
-                layout='vertical',
-                spacing='sm',
-                contents=[
-                    # callAction, separator, websiteAction
-                    SpacerComponent(size='sm'),
-                    # callAction
-                    ButtonComponent(
-                        style='link',
-                        height='sm',
-                        action=URIAction(label='CALL', uri='tel:000000'),
-                    ),
-                    # separator
-                    SeparatorComponent(),
-                    # websiteAction
-                    ButtonComponent(
-                        style='link',
-                        height='sm',
-                        action=URIAction(label='WEBSITE', uri="https://example.com")
-                    )
-                ]
-            ),
-        )
-        message = FlexSendMessage(alt_text="hello", contents=bubble)
-        line_bot_api.reply_message(
-            event.reply_token,
-            message
-        )
-    elif text == 'quick_reply':
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(
-                text='Quick reply',
-                quick_reply=QuickReply(
-                    items=[
-                        QuickReplyButton(
-                            action=PostbackAction(label="label1", data="data1")
-                        ),
-                        QuickReplyButton(
-                            action=MessageAction(label="label2", text="text2")
-                        ),
-                        QuickReplyButton(
-                            action=DatetimePickerAction(label="label3",
-                                                        data="data3",
-                                                        mode="date")
-                        ),
-                        QuickReplyButton(
-                            action=CameraAction(label="label4")
-                        ),
-                        QuickReplyButton(
-                            action=CameraRollAction(label="label5")
-                        ),
-                        QuickReplyButton(
-                            action=LocationAction(label="label6")
-                        ),
-                    ])))
-    """
     # ユーザからビーコンの設定を行う
     elif text == 'beacon':
-        BeaconWhisperEvent(event.reply_token, line_bot_api, user_data).configBeaconMsg()
+        beacon_whisper_event.config_beacon_msg(event)
 
     elif text == 'disconnect':
-        plant_animator.disconnect(line_bot_api, event)
+        plant_animator.disconnect(event)
 
 
     # 植物の生成を行う
@@ -345,7 +149,7 @@ def handle_text_message(event):
     # 植物との接続命令
     elif split_msg[0] in ('connect'):
         if split_msg[1] is not None:
-            plant_animator.connect(text.split[1])
+            plant_animator.connect(text.split[1], event)
 
     # 植物を削除するときの命令
     elif split_msg[0] in ('delete', 'eliminate', 'remove'):
@@ -354,6 +158,9 @@ def handle_text_message(event):
                 PostbackAction(label='Yes', data='delete_plant '+ split_msg[1], displayText='はい'),
                 PostbackAction(label='No', data='delete_plant_cancel '+ split_msg[1], displayText='いいえ'),
             ])
+            template_message = TemplateSendMessage(
+                alt_text='Confirm alt text', template=confirm_template)
+            line_bot_api.reply_message(event.reply_token, template_message)
         else:
             line_bot_api.reply_message(
                 event.reply_token,
@@ -470,11 +277,9 @@ def handle_postback(event):
     elif event.postback.data == 'date_postback':
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text=event.postback.params['date']))
-    elif event.postback.data == 'set_beacon_on':
+    elif event.postback.data in ('set_beacon_on', 'set_beacon_off'):
         # ビーコンを使うかどうかを設定するときの"YES", "No"を押したときの挙動を設定
-        BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).setBeacon(event.postback.data)
-    elif event.postback.data == 'set_beacon_off':
-        BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).setBeacon(event.postback.data)
+        beacon_whisper_event.set_beacon(event)
     else: 
         # 植物の名前を消すときにはワンクッション挟んであげる
         data = event.postback.data.split()
@@ -493,14 +298,14 @@ def handle_postback(event):
 @handler.add(BeaconEvent)
 def handle_beacon(event):
     if plant_animator.listen_beacon_span(int(datetime.now().strftime('%s'))):
-        BeaconWhisperEvent(event.reply_token, line_bot_api,user_data).activationMsg()
+        beacon_whisper_event.activation_msg(event)
         if user_data.json_data['use_line_beacon'] is 1:
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(
                     text='おかえりなさい！'
                          ))
-            plant_animator.listen_beacon(datetime.now().strftime('%s'), user_data.json_data['use_line_beacon'])
+            plant_animator.listen_beacon(int(datetime.now().strftime('%s')), user_data.json_data['use_line_beacon'])
 
 import time
 

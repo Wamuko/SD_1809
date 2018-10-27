@@ -13,8 +13,9 @@ from linebot import (
 )
 
 class PlantAnimator:
-    def __init__(self, user_data):
+    def __init__(self, user_data, line_bot_api):
         self.user_data = user_data
+        self.__line_bot_api = line_bot_api
         self.__plant = None
         self.tell_weather = False
         self.push_message = None
@@ -34,42 +35,53 @@ class PlantAnimator:
         self.user_data.remove_plant(display_name)
 
     # 要求された名前から対応する植物を再生します
-    def connect(self, name):
+    def connect(self, name, event):
         self.__plant = plant = self.user_data.reanimate_plant(name)
         if plant is None:
-            return "その名前の植物はいないよ"
+            chat_text = "その名前の植物はいないよ"
+            if chat_text is not None:
+                self.__line_bot_api.reply_message(
+                event.reply_token, 
+                    TextSendMessage(text=chat_text)
+            )
         else:
             plant.push_message = self.push_message
-            return name + ": なに？"
+            chat_text = name + ": なに？"
+            if chat_text is not None:
+                self.__line_bot_api.reply_message(
+                event.reply_token, 
+                    TextSendMessage(text=chat_text)
+            )
 
     # 植物との接続を切断します
-    def disconnect(self, line_bot_api, event):
-        if self.__plant is None:
+    def disconnect(self, event=None):
+        if self.__plant is None and event is not None:
             chat_text = "植物が選択されてないよ"
             if chat_text is not None:
-                line_bot_api.reply_message(
+                self.__line_bot_api.reply_message(
                 event.reply_token, 
                     TextSendMessage(text=chat_text)
             )
         else:
-            chat_text = self.__plant.display_name + ": またね"
             self.__plant = None
-            if chat_text is not None:
-                line_bot_api.reply_message(
-                event.reply_token, 
-                    TextSendMessage(text=chat_text)
-            )
+            if event is not None:
+                chat_text = self.__plant.display_name + ": またね"
+                if chat_text is not None:
+                    self.__line_bot_api.reply_message(
+                    event.reply_token, 
+                        TextSendMessage(text=chat_text)
+                )
 
     # 植物と接続しているか確認します
     def connecting(self):
         return self.__plant is None
 
     # Lineのテキストを植物に伝え、応答を受け取ります
-    def communicate(self, text, line_bot_api, event):
+    def communicate(self, text, event):
         if self.connecting():
             chat_text = self.__plant.chat(text)
             if chat_text is not None:
-                line_bot_api.reply_message(
+                self.__line_bot_api.reply_message(
                 event.reply_token, 
                     TextSendMessage(text=chat_text)
             )
@@ -79,11 +91,10 @@ class PlantAnimator:
     # ユーザがビーコンの近くにいたら呼ばれます
     def listen_beacon(self, now, beacon_config):
         self.__plant.listen_beacon = (now, beacon_config)
-
+        
     # ユーザのビーコンが一度呼ばれたらそれから60分は呼ばれないようにするためのパーツ
     def listen_beacon_span(self, now):
-        if self.__plant.listen_beacon[0] is None or (
-                now - self.__plant.listen_beacon[0]) < 3600:
+        if self.__plant.listen_beacon[0] is None or (now - self.__plant.listen_beacon[0]) < 3600:
             return False
         else:
             return True
@@ -91,12 +102,16 @@ class PlantAnimator:
     # 植物の状態の更新をします
     def update(self):
         self.__plant.update()
-        hour = datetime.now().hour
+        time = datetime.now()
+        hour = time.hour
+        second = time.second
         if hour == 0:
             self.tell_weather = False
         elif self.tell_weather and hour >= 6:
             self.__report_weather_forecast()
             self.tell_weather = True
+        if second == 0:
+            self.__plant.set_beacon_buf_span()
 
     def __report_weather_forecast(self):
         ud = self.user_data

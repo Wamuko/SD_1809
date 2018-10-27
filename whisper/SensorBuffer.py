@@ -18,6 +18,7 @@ RECV_BUFFER_SIZE = 1024
 
 ProcessEnd = False
 DEFAULT_FETCH_SPAN = 600
+ECO_FETCH_SPAN = 7200
 
 
 class SensorBuffer:

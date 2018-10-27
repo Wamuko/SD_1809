@@ -19,15 +19,13 @@ class BeaconWhisperEvent:
 
     def __init__(
             self,
-            reply_token,
             line_bot_api,
             userData):
-        self.__reply_token = reply_token
         self.__user_data = userData
         self.__line_bot_api = line_bot_api
 
-    def activationMsg(self):
-        # Lineビーコンが接続された場合、もし0:未設定なら設定プロセスを起動する
+    def activation_msg(self, event):
+        # Lineビーコンが接続された場合、もし0:未設定なら設定プロセスに移行する
         if self.__user_data.json_data['use_line_beacon'] is 0:
             confirm_template = ConfirmTemplate(text="LINE beacon が接続されたようです。Beacon Ecoを使用しますか？\nこれを用いることでスマホがビーコンから遠くにあるときはセンサを省エネ化し、センサ寿命を延ばすことができます。\nbeacon と話しかけると設定を変更できます。", actions=[
                 PostbackAction(label='はい', data='set_beacon_on', displayText='はい！'),
@@ -35,15 +33,16 @@ class BeaconWhisperEvent:
             ])
             template_message = TemplateSendMessage(
                 alt_text='Confirm alt text', template=confirm_template)
-            self.__line_bot_api.reply_message(self.__reply_token, template_message)
+            self.__line_bot_api.reply_message(event.reply_token, template_message)
 
 
-    def setBeacon(self, react):
+    def set_beacon(self, event):
         # ビーコンのOnとOffを変更する
+        react = event.postback.data
         if react is 'set_beacon_on':
             self.__user_data.set_use_line_beacon(1)
             self.__line_bot_api.reply_message(
-                self.__reply_token,
+                event.reply_token,
                 TextSendMessage(
                     text='Beacon EcoをONに設定しました'
                 )
@@ -51,21 +50,23 @@ class BeaconWhisperEvent:
         elif react is 'set_beacon_off':
             self.__user_data.set_use_line_beacon(2)
             self.__line_bot_api.reply_message(
-                self.__reply_token,
+                event.reply_token,
                 TextSendMessage(
                     text='Beacon EcoをOFFに設定しました'
                 )
             )
+        else:
+            pass
 
     # beaconを使うかどうかを手動で設定する
-    def configBeaconMsg(self):
+    def config_beacon_msg(self, event):
             confirm_template = ConfirmTemplate(text="LINE beacon Ecoの設定を行います。Beacon Ecoを使用しますか？\nこれを用いることでスマホがビーコンから遠くにあるときはセンサを省エネ化し、センサ寿命を延ばすことができます。\nbeacon と話しかけると設定を変更できます。", actions=[
                 PostbackAction(label='はい', data='set_beacon_on', displayText='はい'),
                 PostbackAction(label='いいえ', data='set_beacon_off', displayText='いいえ'),
             ])
             template_message = TemplateSendMessage(
                 alt_text='Confirm alt text', template=confirm_template)
-            self.__line_bot_api.reply_message(self.__reply_token, template_message)
+            self.__line_bot_api.reply_message(event.reply_token, template_message)
 
     def readBeaconConfig(self):
         if self.__user_data.json_data['use_line_beacon'] is 1:
