@@ -37,7 +37,7 @@ class PlantAnimator:
     def connect(self, name):
         self.__plant = plant = self.user_data.reanimate_plant(name)
         if plant is None:
-            return "その名前の植物はいません"
+            return "その名前の植物はいないよ"
         else:
             plant.push_message = self.push_message
             return name + ": なに？"
