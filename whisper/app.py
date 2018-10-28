@@ -117,6 +117,14 @@ def handle_text_message(event):
         else:
             line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=msg) for msg in msgs])
 
+    lines = (
+            "植物の呼び出し", "  ハロー `植物の名前`",
+            "植物の登録:", "　登録 `植物の名前`",
+            "植物の削除", "　削除 `植物の名前`",
+            "会話の終了", '　またね')
+
+    def reply_help():        
+        reply(os.linesep.join(lines))
     # ユーザIDの取得
     
     # 送られてきた言葉が植物の名前だった場合は、それをキャッシュし「なに？」と返す
@@ -146,37 +154,38 @@ def handle_text_message(event):
     # ユーザからビーコンの設定を行う
     elif text == 'beacon':
         beacon_whisper_event.config_beacon_msg(event)
-
-    elif text == 'disconnect':
+    elif text in {"help", "ヘルプ"}:
+        reply_help()
+    elif text in {'またね', 'じゃあね', 'バイバイ'}:
         reply(plant_animator.disconnect(event))
 
     # 植物の生成を行う
-    elif split_msg[0] in ('create', 'register'):
+    elif split_msg[0] in {'登録', 'ようこそ'}:
         if len(split_msg) == 2:
             name = split_msg[1]
             reply(plant_animator.register_plant(name))
         elif len(split_msg) == 1:
             reply("名前が設定されていません")
         else:
-            reply(("メッセージが不正です", "例：create `植物の名前`"))
+            reply(("メッセージが不正です", "例：登録 `植物の名前`"))
 
     # 植物との接続命令
-    elif split_msg[0] in ('connect', ):
+    elif split_msg[0] in {'ハロー', 'hello', 'こんにちは', 'こんばんは', 'おはよう', 'ごきげんよう'}:
         if len(split_msg) == 2:
             reply(plant_animator.connect(split_msg[1], event)) 
         elif len(split_msg) == 1:
             reply("植物が選択されていません")
         else:
-            reply(("メッセージが不正です：", "例：connect `植物の名前`"))
+            reply(("メッセージが不正です：", "例：ハロー `植物の名前`"))
 
     # 植物を削除するときの命令
-    elif split_msg[0] in ('delete', 'eliminate', 'remove'):
+    elif split_msg[0] == {'削除'}:
         if len(split_msg) == 2:
             reply(plant_animator.delete_plant(split_msg[1]))
         elif len(split_msg) == 1:
             reply("植物が選択されていません")
         else:
-            reply(("メッセージが不正です：" , "例：delete `植物の名前`"))
+            reply(("メッセージが不正です：" , "例：削除 `植物の名前`"))
 
     # 植物を削除するときの命令
         # if split_msg[1] is not None:        
@@ -196,8 +205,12 @@ def handle_text_message(event):
         #     )
     else:
         msg = plant_animator.communicate(text, event)
-        if msg is not None:
+        if msg is None:
+            reply("誰ともお話ししていません")
+            reply_help()
+        else:
             reply(msg)
+        
         # line_bot_api.reply_message(
         #     event.reply_token, TextSendMessage(text=event.message.text))
 

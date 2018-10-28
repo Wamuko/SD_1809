@@ -42,7 +42,7 @@ class PlantAnimator:
     # 植物を削除します
     def delete_plant(self, display_name):
         msg = []
-        if self.__plant.display_name == display_name:
+        if self.connecting() and self.__plant.display_name == display_name:
             msg.extend(self.disconnect())
 
         self.user_data.remove_plant(display_name)
@@ -61,7 +61,7 @@ class PlantAnimator:
     # 植物との接続を切断します
     def disconnect(self, event=None):
         if not self.connecting() and event is not None:
-            return "植物が選択されてないよ"
+            return "誰ともお話ししてないよ"
         else:
             pl = self.__plant
             self.__plant = None
