@@ -1,4 +1,3 @@
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import Sensor
 
@@ -33,9 +32,6 @@ class Plant:
         self.push_message = None
 
         self.__sensor_buf.start(Sensor.loop)
-        # executor = ThreadPoolExecutor(2)
-        # self.__listening_thread = executor.submit(self.__sensor_buf.start,
-        #   Sensor.loop)
 
     def update(self):
         return None

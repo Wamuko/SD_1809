@@ -1,5 +1,4 @@
 from collections import deque
-# from socket import socket, AF_INET, SOCK_STREAM
 from datetime import datetime
 import threading
 import concurrent.futures as futures
@@ -27,7 +26,6 @@ class SensorBuffer:
         self.last_fetch_time = None
         self.__humidity = deque(maxlen=BUFFER_MAX_LEN)
         self.__luminosity = deque(maxlen=BUFFER_MAX_LEN)
-        # self.__sock = socket(AF_INET, SOCK_STREAM)
         self.__listening_thread = None
         self.__lock = threading.Lock()
 
@@ -58,7 +56,7 @@ class SensorBuffer:
         parent_conn, child_conn = mp.Pipe()
         child_proc = mp.Process(target=loop_func, args=(child_conn, ))
         child_proc.start()
-        
+
         th = self.__listening_thread = threading.Thread(
             target=self.__listening_loop, args=(parent_conn, ))
         th.start()
@@ -109,6 +107,6 @@ if __name__ == "__main__":
 
         print("submit")
 
-        time.sleep(10)
+        time.sleep(7)
 
         ProcessEnd = True

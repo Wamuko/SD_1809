@@ -53,24 +53,15 @@ class PlantAnimator:
         new_plant = self.user_data.reanimate_plant(name)
         if new_plant is None:
             return "その名前の植物はいないよ"
-            # if chat_text is not None:
-            #     self.__line_bot_api.reply_message(
-            #         event.reply_token, TextSendMessage(text=chat_text))
         else:
             new_plant.push_message = self.push_message
             self.__plant = new_plant
             return new_plant.say_hello()
-            # if chat_text is not None:
-            #     self.__line_bot_api.reply_message(
-            #         event.reply_token, TextSendMessage(text=chat_text))
 
     # 植物との接続を切断します
     def disconnect(self, event=None):
         if not self.connecting() and event is not None:
             return "植物が選択されてないよ"
-            # if chat_text is not None:
-            #     self.__line_bot_api.reply_message(
-            #         event.reply_token, TextSendMessage(text=chat_text))
         else:
             pl = self.__plant
             self.__plant = None
@@ -78,9 +69,6 @@ class PlantAnimator:
                 return pl.say_see_you()
             else:
                 return None
-                # if chat_text is not None:
-                #     self.__line_bot_api.reply_message(
-                #         event.reply_token, TextSendMessage(text=chat_text))
 
     # 植物と接続しているか確認します
     def connecting(self):
@@ -90,9 +78,6 @@ class PlantAnimator:
     def communicate(self, text, event):
         if self.connecting():
             return self.__plant.chat(text)
-            # if chat_text is not None:
-            #     self.__line_bot_api.reply_message(
-            #         event.reply_token, TextSendMessage(text=chat_text))
         else:
             return None
 
