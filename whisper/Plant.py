@@ -43,6 +43,10 @@ class Plant:
     def chat(self, text):
         return self.__speech_center.make_response(self, user_text=text)
 
+    # 呼び出し時の挨拶を生成します
+    def say_hello(self):
+        return self.__speech_center.say_hello(self)
+
     # 別れの挨拶を生成します
     def say_see_you(self):
         return self.__speech_center.respond_see_you(self)

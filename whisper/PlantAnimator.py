@@ -52,7 +52,7 @@ class PlantAnimator:
                 self.disconnect()
             new_plant.push_message = self.push_message
             self.__plant = new_plant
-            chat_text = name + ": なに？"
+            chat_text = new_plant.say_hello()
             if chat_text is not None:
                 self.__line_bot_api.reply_message(
                     event.reply_token, TextSendMessage(text=chat_text))
