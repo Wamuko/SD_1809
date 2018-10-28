@@ -5,6 +5,9 @@ import os
 REPEAT = range(5)
 DISCARD = range(20)
 
+DEFAULT_HUMIDITY = 700
+DEFAULT_LUMINOSITY = 50
+
 ser = serial.Serial("/dev/ttyACM0", 9600)
 print(ser)
 
@@ -29,17 +32,22 @@ def loop(conn):
             conn.close()
             break
         else:
-            ser.write(("A" + os.linesep).encode())
-            conn.send(read())
+            conn.send(try_read())
 
 
-def read():
-    print("read")
-    # hum_histgram = {}
-    # lum_histgram = {}
-    byte_seq = ser.readline()
-    hum, lum = map(int, byte_seq.decode().split())
-    return (hum, lum)
+def try_read():
+    hum = lum = -1
+    for i in range(5):
+        ser.write(("A" + os.linesep).encode())
+        print("read")
+        # hum_histgram = {}
+        # lum_histgram = {}
+        byte_seq = ser.readline()
+        hum, lum = map(int, byte_seq.decode().split())
+        if not (hum == -1 and lum == -1):
+            return (hum, lum)
+
+    return DEFAULT_HUMIDITY, DEFAULT_LUMINOSITY
     # for _ in REPEAT:
     #     hum, lum = map(int, ser.readline().decode().split())
     #     for _ in DISCARD:
