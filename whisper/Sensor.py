@@ -5,10 +5,8 @@ import os
 REPEAT = range(5)
 DISCARD = range(20)
 
-try:
-    ser = serial.Serial("/dev/ttyAMA0", 9600)
-except Exception as ex:
-    pass
+ser = serial.Serial("/dev/ttyACM0", 9600)
+print(ser)
 
 
 def debug_main():
@@ -34,7 +32,8 @@ def loop(conn):
 def read():
     # hum_histgram = {}
     # lum_histgram = {}
-    hum, lum = map(int, ser.readline().decode().split())
+    byte_seq = ser.readline()
+    hum, lum = map(int, byte_seq.decode().split())
     return (hum, lum)
     # for _ in REPEAT:
     #     hum, lum = map(int, ser.readline().decode().split())
