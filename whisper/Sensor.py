@@ -12,7 +12,7 @@ print(ser)
 def debug_main():
     while 1:
         time.sleep(1)
-        print("read")
+        print("write")
         ser.write(("A" + os.linesep).encode())
 
         print(read())
@@ -30,6 +30,7 @@ def loop(conn):
 
 
 def read():
+    print("read")
     # hum_histgram = {}
     # lum_histgram = {}
     byte_seq = ser.readline()
