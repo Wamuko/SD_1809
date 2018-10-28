@@ -48,7 +48,7 @@ class PlantAnimator:
                 self.__line_bot_api.reply_message(
                     event.reply_token, TextSendMessage(text=chat_text))
         else:
-            if self.__plant is not None:
+            if self.connecting():
                 self.disconnect()
             new_plant.push_message = self.push_message
             self.__plant = new_plant
@@ -59,7 +59,7 @@ class PlantAnimator:
 
     # 植物との接続を切断します
     def disconnect(self, event=None):
-        if self.__plant is None and event is not None:
+        if not self.connecting() and event is not None:
             chat_text = "植物が選択されてないよ"
             if chat_text is not None:
                 self.__line_bot_api.reply_message(
@@ -74,7 +74,7 @@ class PlantAnimator:
 
     # 植物と接続しているか確認します
     def connecting(self):
-        return self.__plant is None
+        return self.__plant is not None
 
     # Lineのテキストを植物に伝え、応答を受け取ります
     def communicate(self, text, event):
@@ -100,7 +100,8 @@ class PlantAnimator:
 
     # 植物の状態の更新をします
     def update(self):
-        self.__plant.update()
+        if self.connecting():
+            self.__plant.update()
         time = datetime.now()
         hour = time.hour
         second = time.second
@@ -110,8 +111,10 @@ class PlantAnimator:
             self.__report_weather_forecast()
             self.tell_weather = True
         if second == 0:
-            self.__plant.set_beacon_buf_span()
+            if self.connecting():
+                self.__plant.set_beacon_buf_span()
 
     def __report_weather_forecast(self):
-        ud = self.user_data
-        self.__plant.report_weather_forecast(ud.postal_code)
+        if self.connecting():
+            ud = self.user_data
+            self.__plant.report_weather_forecast(ud.postal_code)
