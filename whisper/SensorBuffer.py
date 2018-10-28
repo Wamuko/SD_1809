@@ -68,7 +68,7 @@ class SensorBuffer:
         try:
             while True:
                 unix_time_now = int(datetime.now().strftime('%s'))
-                if unix_time_now - self.last_fetch_time > self.fetch_span:
+                if self.last_fetch_time is None or unix_time_now - self.last_fetch_time > self.fetch_span:
                     try:
                         self.last_fetch_time = unix_time_now
                         parent_conn.send(b"1")
