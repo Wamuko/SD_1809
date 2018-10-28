@@ -163,7 +163,7 @@ def handle_text_message(event):
     # 植物との接続命令
     elif split_msg[0] in ('connect', ):
         if len(split_msg) == 2:
-            reply(plant_animator.connect(text.split[1], event)) 
+            reply(plant_animator.connect(split_msg[1], event)) 
         elif len(split_msg) == 1:
             reply("植物が選択されていません")
         else:
