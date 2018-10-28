@@ -12,8 +12,10 @@ print(ser)
 def debug_main():
     while 1:
         time.sleep(1)
-        print("write")
-        ser.write(("A" + os.linesep).encode())
+        sig = ("A" + os.linesep).encode()
+        print("write %s" % sig)
+
+        ser.write(sig)
 
         print(read())
 
@@ -56,4 +58,5 @@ def read():
 
 
 if __name__ == "__main__":
+    time.sleep(3)
     debug_main()
