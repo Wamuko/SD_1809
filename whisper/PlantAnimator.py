@@ -29,9 +29,9 @@ class PlantAnimator:
         return self.__plant
 
     # 植物を生成します　memo: 引数にとりあえずdisplay_nameをいれておきます
+    # 接続する際は別途処理を書いてください
     def register_plant(self, display_name):
-        pl = self.__plant = self.user_data.add_plant(display_name)
-        pl.push_message = self.push_message
+        self.user_data.add_plant(display_name)
 
     def delete_plant(self, display_name):
         if self.__plant.display_name == display_name:
@@ -39,38 +39,38 @@ class PlantAnimator:
         self.user_data.remove_plant(display_name)
 
     # 要求された名前から対応する植物を再生します
-    # 既に植物と接続している場合は接続を切ってから再生します
+    # 既に植物と接続している場合は上書きします
+    # disconnectの処理を挟みたいなら利用側で書いてください
     def connect(self, name, event):
         new_plant = self.user_data.reanimate_plant(name)
         if new_plant is None:
-            chat_text = "その名前の植物はいないよ"
-            if chat_text is not None:
-                self.__line_bot_api.reply_message(
-                    event.reply_token, TextSendMessage(text=chat_text))
+            return "その名前の植物はいないよ"
+            # if chat_text is not None:
+            #     self.__line_bot_api.reply_message(
+            #         event.reply_token, TextSendMessage(text=chat_text))
         else:
-            if self.connecting():
-                self.disconnect()
             new_plant.push_message = self.push_message
             self.__plant = new_plant
-            chat_text = new_plant.say_hello()
-            if chat_text is not None:
-                self.__line_bot_api.reply_message(
-                    event.reply_token, TextSendMessage(text=chat_text))
+            return new_plant.say_hello()
+            # if chat_text is not None:
+            #     self.__line_bot_api.reply_message(
+            #         event.reply_token, TextSendMessage(text=chat_text))
 
     # 植物との接続を切断します
     def disconnect(self, event=None):
         if not self.connecting() and event is not None:
-            chat_text = "植物が選択されてないよ"
-            if chat_text is not None:
-                self.__line_bot_api.reply_message(
-                    event.reply_token, TextSendMessage(text=chat_text))
+            return "植物が選択されてないよ"
+            # if chat_text is not None:
+            #     self.__line_bot_api.reply_message(
+            #         event.reply_token, TextSendMessage(text=chat_text))
         else:
+            pl = self.__plant
             self.__plant = None
             if event is not None:
-                chat_text = self.__plant.say_see_you()
-                if chat_text is not None:
-                    self.__line_bot_api.reply_message(
-                        event.reply_token, TextSendMessage(text=chat_text))
+                return pl.say_see_you()
+                # if chat_text is not None:
+                #     self.__line_bot_api.reply_message(
+                #         event.reply_token, TextSendMessage(text=chat_text))
 
     # 植物と接続しているか確認します
     def connecting(self):
@@ -79,10 +79,10 @@ class PlantAnimator:
     # Lineのテキストを植物に伝え、応答を受け取ります
     def communicate(self, text, event):
         if self.connecting():
-            chat_text = self.__plant.chat(text)
-            if chat_text is not None:
-                self.__line_bot_api.reply_message(
-                    event.reply_token, TextSendMessage(text=chat_text))
+            return self.__plant.chat(text)
+            # if chat_text is not None:
+            #     self.__line_bot_api.reply_message(
+            #         event.reply_token, TextSendMessage(text=chat_text))
         else:
             pass
 

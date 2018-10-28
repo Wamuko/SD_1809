@@ -106,8 +106,18 @@ def callback():
 def handle_text_message(event):
     text = event.message.text
     split_msg = text.split(' ')
-    # current_plant = ""
 
+    def reply(msg):
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=msg))
+
+    # 既に接続されている植物がいるかを確認した上で、新しく接続を開始します
+    def check_and_connect(name, event):
+        if plant_animator.connecting():
+            reply( plant_animator.disconnect())
+
+        reply(plant_animator.connect(name, event))
+
+    
     # ユーザIDの取得
     
     # 送られてきた言葉が植物の名前だった場合は、それをキャッシュし「なに？」と返す
@@ -138,18 +148,19 @@ def handle_text_message(event):
         beacon_whisper_event.config_beacon_msg(event)
 
     elif text == 'disconnect':
-        plant_animator.disconnect(event)
-
+        reply(plant_animator.disconnect(event))
 
     # 植物の生成を行う
     elif split_msg[0] in ('create', 'register'):
         if split_msg[1] is not None:
-            plant_animator.register_plant(text.split[1])
-
+            name = text.split[1]
+            reply(plant_animator.register_plant(name))
+            check_and_connect(name, event)
+            
     # 植物との接続命令
     elif split_msg[0] in ('connect', ):
         if split_msg[1] is not None:
-            plant_animator.connect(text.split[1], event)
+            check_and_connect(text.split[1], event)           
 
     # 植物を削除するときの命令
     elif split_msg[0] in ('delete', 'eliminate', 'remove'):
