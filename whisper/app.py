@@ -337,4 +337,4 @@ if __name__ == "__main__":
 
     with futures.ThreadPoolExecutor(2) as exec:
         exec.submit(app.run, debug=options.debug, port=options.port)
-        exec.submit(main_loop, 1)
+        exec.submit(main_loop, 0.9)
