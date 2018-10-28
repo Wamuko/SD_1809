@@ -206,7 +206,7 @@ def handle_text_message(event):
     else:
         msg = plant_animator.communicate(text, event)
         if msg is None:
-            reply("誰ともお話ししていません", help_msg())
+            reply(["誰ともお話ししていません", help_msg()])
         else:
             reply(msg)
         
