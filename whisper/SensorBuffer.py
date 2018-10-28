@@ -27,6 +27,7 @@ class SensorBuffer:
         self.__humidity = deque(maxlen=BUFFER_MAX_LEN)
         self.__luminosity = deque(maxlen=BUFFER_MAX_LEN)
         self.__listening_thread = None
+        self.__parent_conn = None
         self.__lock = threading.Lock()
 
     def get_humidity(self):
@@ -52,11 +53,11 @@ class SensorBuffer:
         return ret
 
     def get_current_condition(self):
-        return self.__fetch_data(int(datetime.now().strftime('%s')))
+        
 
     def start(self, loop_func):
         print("thread start")
-        parent_conn, child_conn = mp.Pipe()
+        self.__parent_conn, child_conn = mp.Pipe()
         child_proc = mp.Process(target=loop_func, args=(child_conn, ))
         child_proc.start()
 
@@ -72,7 +73,7 @@ class SensorBuffer:
                 unix_time_now = int(datetime.now().strftime('%s'))
                 if self.last_fetch_time is None or unix_time_now - self.last_fetch_time > self.fetch_span:
                     try:
-                        self.__fetch_data(parent_conn, unix_time_now)
+                        self.__fetch_data( unix_time_now)
                         if ProcessEnd:
                             break
 
@@ -86,7 +87,8 @@ class SensorBuffer:
         parent_conn.send("quit")
         parent_conn.close()
 
-    def __fetch_data(self, conn, fetch_time):
+    def __fetch_data(self, fetch_time):
+        conn = self.__parent_conn
         self.last_fetch_time = fetch_time
         print("send sig")
         conn.send(b"1")
