@@ -84,7 +84,7 @@ class PlantAnimator:
             #     self.__line_bot_api.reply_message(
             #         event.reply_token, TextSendMessage(text=chat_text))
         else:
-            pass
+            return None
 
     # ユーザがビーコンの近くにいたら呼ばれます
     def listen_beacon(self, now, beacon_config):

@@ -127,7 +127,8 @@ def handle_text_message(event):
     #         event.reply_token, TextSendMessage(text='なに？'))
     
     # まずは現在アクティベートされている植物に対してCommunicateを投げる
-    plant_animator.communicate(text, event)
+    # 追記：先にcommunicateするのは拙い。システム処理に関する言葉も植物に投げられることになる
+    # plant_animator.communicate(text, event)
 
     if text == 'bye':
         if isinstance(event.source, SourceGroup):
@@ -156,7 +157,7 @@ def handle_text_message(event):
             name = text.split[1]
             reply(plant_animator.register_plant(name))
             check_and_connect(name, event)
-            
+
     # 植物との接続命令
     elif split_msg[0] in ('connect', ):
         if split_msg[1] is not None:
@@ -180,8 +181,9 @@ def handle_text_message(event):
                 )
             )
     else:
-        line_bot_api.reply_message(
-            event.reply_token, TextSendMessage(text=event.message.text))
+        reply(plant_animator.communicate(text, event))
+        # line_bot_api.reply_message(
+        #     event.reply_token, TextSendMessage(text=event.message.text))
 
 
 
