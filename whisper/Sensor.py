@@ -6,7 +6,7 @@ REPEAT = range(5)
 DISCARD = range(20)
 
 try:
-    ser = serial.Serial("/dev/ttyACM0", 9600)
+    ser = serial.Serial("/dev/ttyAMA0", 9600)
 except Exception as ex:
     pass
 
