@@ -21,13 +21,14 @@ def debug_main():
 
 
 def loop(conn):
+    time.sleep(2)
     while 1:
         msg = conn.recv()
         if msg == "quit":
             conn.close()
             break
         else:
-            ser.write("0".encode())
+            ser.write(("A" + os.linesep).encode())
             conn.send(read())
 
 
