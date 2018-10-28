@@ -113,15 +113,6 @@ def handle_text_message(event):
         else:
             line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=msg) for msg in msgs])
 
-    # 既に接続されている植物がいるかを確認した上で、新しく接続を開始します
-    def check_and_connect(name, event):
-        msgs = []
-        if plant_animator.connecting():
-            msgs.extend(plant_animator.disconnect())
-
-        msgs.extend(plant_animator.connect(name, event))
-        reply(msgs)
-
     # ユーザIDの取得
     
     # 送られてきた言葉が植物の名前だった場合は、それをキャッシュし「なに？」と返す
