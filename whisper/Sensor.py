@@ -44,7 +44,7 @@ def try_read():
         # lum_histgram = {}
         byte_seq = ser.readline()
         hum, lum = map(int, byte_seq.decode().split())
-        if not (hum == -1 and lum == -1):
+        if hum != -1 and lum != -1:
             return (hum, lum)
 
     return DEFAULT_HUMIDITY, DEFAULT_LUMINOSITY
