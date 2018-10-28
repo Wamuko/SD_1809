@@ -34,6 +34,7 @@ class SensorBuffer:
         lock = self.__lock
         lock.acquire()
         ret = 0
+        print(self.__humidity)
         if len(self.__humidity) > 0:
             ret = self.__humidity[-1]
 
@@ -72,9 +73,9 @@ class SensorBuffer:
                         self.last_fetch_time = unix_time_now
                         parent_conn.send(b"1")
                         hum, lum = parent_conn.recv()
+                        print("%d %d" % (hum, lum))
                         self.__push_data(self.__humidity, hum)
                         self.__push_data(self.__luminosity, lum)
-                        print("%d %d" % (hum, lum))
                         if ProcessEnd:
                             break
 
