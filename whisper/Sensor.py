@@ -24,6 +24,7 @@ def loop(conn):
     time.sleep(2)
     while 1:
         msg = conn.recv()
+        print("Sensor: msg = %s" % msg)
         if msg == "quit":
             conn.close()
             break

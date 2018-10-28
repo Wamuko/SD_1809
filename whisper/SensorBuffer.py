@@ -63,6 +63,7 @@ class SensorBuffer:
 
     def __listening_loop(self, parent_conn):
         global ProcessEnd
+        print("loop start")
         try:
             while True:
                 unix_time_now = int(datetime.now().strftime('%s'))
