@@ -147,7 +147,7 @@ def handle_text_message(event):
             plant_animator.register_plant(text.split[1])
 
     # 植物との接続命令
-    elif split_msg[0] in ('connect'):
+    elif split_msg[0] in ('connect', ):
         if split_msg[1] is not None:
             plant_animator.connect(text.split[1], event)
 
