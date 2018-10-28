@@ -51,7 +51,7 @@ class ExampleResponce(SpeechCenter):
 
         if not need_light and not need_water:
             response_msg += "元気だよ！"
-            if np.random.randrange(10) < 2:
+            if np.random.randint(0, 10) < 2:
                 response_msg += "\nいつもありがとう(^^)"
 
         return response_msg
