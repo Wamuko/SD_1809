@@ -28,6 +28,7 @@ class SensorBuffer:
         self.__humidity = deque(maxlen=BUFFER_MAX_LEN)
         self.__luminosity = deque(maxlen=BUFFER_MAX_LEN)
         # self.__sock = socket(AF_INET, SOCK_STREAM)
+        self.__listening_thread = None
         self.__lock = threading.Lock()
 
     def get_humidity(self):
@@ -57,12 +58,13 @@ class SensorBuffer:
         parent_conn, child_conn = mp.Pipe()
         child_proc = mp.Process(target=loop_func, args=(child_conn, ))
         child_proc.start()
-        # sock = self.__sock
-        # sock.bind((HOST, PORT))
-        # sock.listen(NUM_THREAD)
-        # conn, addr = sock.accept()
-        global ProcessEnd
+        
+        th = self.__listening_thread = threading.Thread(
+            target=self.__listening_loop, args=(parent_conn, ))
+        th.start()
 
+    def __listening_loop(self, parent_conn):
+        global ProcessEnd
         try:
             while True:
                 unix_time_now = int(datetime.now().strftime('%s'))
@@ -70,9 +72,6 @@ class SensorBuffer:
                     try:
                         self.last_fetch_time = unix_time_now
                         parent_conn.send(b"1")
-                        # conn.send((1).to_bytes(1, "big"))
-                        # byte_seq = conn.recv(RECV_BUFFER_SIZE)
-                        # hum, lum = map(int, byte_seq.decode().split())
                         hum, lum = parent_conn.recv()
                         self.__push_data(self.__humidity, hum)
                         self.__push_data(self.__luminosity, lum)
@@ -89,7 +88,6 @@ class SensorBuffer:
         print("close (when only debug)", file=sys.stderr)
         parent_conn.send("quit")
         parent_conn.close()
-        # sock.close()
 
     def __push_data(self, buffer, data):
         lock = self.__lock

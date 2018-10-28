@@ -32,9 +32,10 @@ class Plant:
         self.listen_beacon = listen_beacon
         self.push_message = None
 
-        executor = ThreadPoolExecutor(2)
-        self.__listening_thread = executor.submit(self.__sensor_buf.start,
-                                                  Sensor.loop)
+        self.__sensor_buf.start(Sensor.loop)
+        # executor = ThreadPoolExecutor(2)
+        # self.__listening_thread = executor.submit(self.__sensor_buf.start,
+        #   Sensor.loop)
 
     def update(self):
         return None
