@@ -123,8 +123,8 @@ def handle_text_message(event):
             "植物の削除", "　削除 `植物の名前`",
             "会話の終了", '　またね')
 
-    def reply_help():        
-        reply(os.linesep.join(lines))
+    def help_msg():        
+        return os.linesep.join(lines)
     # ユーザIDの取得
     
     # 送られてきた言葉が植物の名前だった場合は、それをキャッシュし「なに？」と返す
@@ -155,7 +155,7 @@ def handle_text_message(event):
     elif text == 'beacon':
         beacon_whisper_event.config_beacon_msg(event)
     elif text in {"help", "ヘルプ"}:
-        reply_help()
+        reply(help_msg())
     elif text in {'またね', 'じゃあね', 'バイバイ'}:
         reply(plant_animator.disconnect(event))
 
@@ -206,8 +206,7 @@ def handle_text_message(event):
     else:
         msg = plant_animator.communicate(text, event)
         if msg is None:
-            reply("誰ともお話ししていません")
-            reply_help()
+            reply("誰ともお話ししていません", help_msg())
         else:
             reply(msg)
         
