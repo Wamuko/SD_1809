@@ -107,20 +107,15 @@ def handle_text_message(event):
     text = event.message.text
     split_msg = text.split(' ')
 
+    # 返信を行います
+    # 引数がNoneの場合は何も行いません
     def reply(msgs):
-        if not isinstance(msgs, (list, tuple)):
+        if msgs is None:
+            pass
+        elif not isinstance(msgs, (list, tuple)):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=msgs))
         else:
             line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=msg) for msg in msgs])
-
-    # 既に接続されている植物がいるかを確認した上で、新しく接続を開始します
-    def check_and_connect(name, event):
-        msgs = []
-        if plant_animator.connecting():
-            msgs.extend(plant_animator.disconnect())
-
-        msgs.extend(plant_animator.connect(name, event))
-        reply(msgs)
 
     # ユーザIDの取得
     
