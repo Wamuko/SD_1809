@@ -113,7 +113,7 @@ def handle_text_message(event):
     # 既に接続されている植物がいるかを確認した上で、新しく接続を開始します
     def check_and_connect(name, event):
         if plant_animator.connecting():
-            reply( plant_animator.disconnect())
+            reply(plant_animator.disconnect())
 
         reply(plant_animator.connect(name, event))
 
@@ -160,26 +160,38 @@ def handle_text_message(event):
 
     # 植物との接続命令
     elif split_msg[0] in ('connect', ):
-        if split_msg[1] is not None:
-            check_and_connect(text.split[1], event)           
-
+        if len(split_msg) == 2:
+            check_and_connect(text.split[1], event) 
+        elif len(split_msg) == 1:
+            reply("植物が選択されていません")
+        else:
+            reply("メッセージが不正です：" + os.linesep + "例：connect `植物の名前`")
     # 植物を削除するときの命令
     elif split_msg[0] in ('delete', 'eliminate', 'remove'):
-        if split_msg[1] is not None:        
-            confirm_template = ConfirmTemplate(text= split_msg[1] +"の情報を削除します\n本当によろしいですか？\n", actions=[
-                PostbackAction(label='Yes', data='delete_plant '+ split_msg[1], displayText='はい'),
-                PostbackAction(label='No', data='delete_plant_cancel '+ split_msg[1], displayText='いいえ'),
-            ])
-            template_message = TemplateSendMessage(
-                alt_text='Confirm alt text', template=confirm_template)
-            line_bot_api.reply_message(event.reply_token, template_message)
-        else:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(
-                    text='植物が選択されていません'
-                )
+        if len(split_msg) == 2:
+            reply(
+                plant_animator.delete_plant(split_msg[1])
             )
+        elif len(split_msg)== 1 :
+            reply("植物が選択されていません")
+        else:
+            reply("メッセージが不正です：" + os.linesep + "例：delete `植物の名前`")
+    # 植物を削除するときの命令
+        # if split_msg[1] is not None:        
+        #     confirm_template = ConfirmTemplate(text= split_msg[1] +"の情報を削除します\n本当によろしいですか？\n", actions=[
+        #         PostbackAction(label='Yes', data='delete_plant '+ split_msg[1], displayText='はい'),
+        #         PostbackAction(label='No', data='delete_plant_cancel '+ split_msg[1], displayText='いいえ'),
+        #     ])
+        #     template_message = TemplateSendMessage(
+        #         alt_text='Confirm alt text', template=confirm_template)
+        #     line_bot_api.reply_message(event.reply_token, template_message)
+        # else:
+        #     line_bot_api.reply_message(
+        #         event.reply_token,
+        #         TextSendMessage(
+        #             text='植物が選択されていません'
+        #         )
+        #     )
     else:
         reply(plant_animator.communicate(text, event))
         # line_bot_api.reply_message(
