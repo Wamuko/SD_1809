@@ -4,7 +4,7 @@ import serial
 REPEAT = range(5)
 DISCARD = range(20)
 
-ser = serial.Serial("/dev/ttyACM0", 9600)
+ser = serial.Serial("/dev/ttyUSB0", 9600)
 
 
 def debug_main():
