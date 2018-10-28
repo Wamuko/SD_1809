@@ -1,5 +1,6 @@
 import numpy as np
 from WeatherForecast import WeatherForecast
+from Plant import Plant
 
 
 class SpeechCenter:
@@ -27,6 +28,9 @@ class ExampleResponce(SpeechCenter):
             return "今日は天気がいいから外に出して"
         else:
             return "今日はあまり天気が良くないね"
+
+    def respond_see_you(self, plant: Plant):
+        return "%s: またね" % plant.display_name
 
     @staticmethod
     def respond_health(plant):

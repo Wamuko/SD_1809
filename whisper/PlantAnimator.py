@@ -67,7 +67,7 @@ class PlantAnimator:
         else:
             self.__plant = None
             if event is not None:
-                chat_text = self.__plant.display_name + ": またね"
+                chat_text = self.__plant.say_see_you()
                 if chat_text is not None:
                     self.__line_bot_api.reply_message(
                         event.reply_token, TextSendMessage(text=chat_text))

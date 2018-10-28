@@ -43,6 +43,10 @@ class Plant:
     def chat(self, text):
         return self.__speech_center.make_response(self, user_text=text)
 
+    # 別れの挨拶を生成します
+    def say_see_you(self):
+        return self.__speech_center.respond_see_you(self)
+
     # 天気予報のメッセージをプッシュします
     def report_weather_forecast(self, postal_code):
         self.push_message(
