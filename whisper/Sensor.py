@@ -1,5 +1,6 @@
 import time
 import serial
+import os
 
 REPEAT = range(5)
 DISCARD = range(20)
@@ -14,7 +15,7 @@ def debug_main():
     while 1:
         time.sleep(1)
         print("read")
-        ser.write("0".encode())
+        ser.write(("0" + os.linesep).encode())
 
         print(read())
 
