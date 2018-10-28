@@ -51,9 +51,11 @@ class SensorBuffer:
         lock.release()
         return ret
 
+    def get_current_condition(self):
+        return self.__fetch_data(int(datetime.now().strftime('%s')))
+
     def start(self, loop_func):
         print("thread start")
-        self.last_fetch_time = int(datetime.now().strftime('%s'))
         parent_conn, child_conn = mp.Pipe()
         child_proc = mp.Process(target=loop_func, args=(child_conn, ))
         child_proc.start()
@@ -70,12 +72,7 @@ class SensorBuffer:
                 unix_time_now = int(datetime.now().strftime('%s'))
                 if self.last_fetch_time is None or unix_time_now - self.last_fetch_time > self.fetch_span:
                     try:
-                        self.last_fetch_time = unix_time_now
-                        parent_conn.send(b"1")
-                        hum, lum = parent_conn.recv()
-                        print("%d %d" % (hum, lum))
-                        self.__push_data(self.__humidity, hum)
-                        self.__push_data(self.__luminosity, lum)
+                        self.__fetch_data(parent_conn, unix_time_now)
                         if ProcessEnd:
                             break
 
@@ -89,11 +86,18 @@ class SensorBuffer:
         parent_conn.send("quit")
         parent_conn.close()
 
-    def __push_data(self, buffer, data):
+    def __fetch_data(self, conn, fetch_time):
+        self.last_fetch_time = fetch_time
+        print("send sig")
+        conn.send(b"1")
+        hum, lum = conn.recv()
+        print("%d %d" % (hum, lum))
         lock = self.__lock
         lock.acquire()
-        buffer.append(data)
+        self.__humidity.append(hum)
+        self.__luminosity.append(lum)
         lock.release()
+        return hum, lum
 
 
 if __name__ == "__main__":

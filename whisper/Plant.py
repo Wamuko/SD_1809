@@ -58,12 +58,12 @@ class Plant:
             self.__speech_center.report_weather_forecast(postal_code))
 
     def needWater(self):
-        hum = self.__sensor_buf.get_humidity()
+        hum, _ = self.__sensor_buf.get_current_condition()
         print("hum %d" % hum)
         return hum >= 800
 
     def needLuminesity(self):
-        lum = self.__sensor_buf.get_luminosity()
+        _, lum = self.__sensor_buf.get_current_condition()
         print("lum %d" % lum)
         return lum < 100
 
