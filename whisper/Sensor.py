@@ -13,6 +13,7 @@ except Exception as ex:
 def debug_main():
     while 1:
         time.sleep(1)
+        print("read")
         ser.write("0".encode())
 
         print(read())
