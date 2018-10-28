@@ -13,7 +13,7 @@ def debug_main():
     while 1:
         time.sleep(1)
         print("read")
-        ser.write(("0" + os.linesep).encode())
+        ser.write(("A" + os.linesep).encode())
 
         print(read())
 
