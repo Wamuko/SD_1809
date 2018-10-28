@@ -29,6 +29,9 @@ class ExampleResponce(SpeechCenter):
         else:
             return "今日はあまり天気が良くないね"
 
+    def say_nice_to_meet_you(self, plant: Plant):
+        return "%s: はじめまして!" % plant.display_name
+
     def say_hello(self, plant: Plant):
         return "%s: なに？" % plant.display_name
 

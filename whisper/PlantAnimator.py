@@ -28,19 +28,27 @@ class PlantAnimator:
     def plant(self):
         return self.__plant
 
-    # 植物を生成します　memo: 引数にとりあえずdisplay_nameをいれておきます
-    # 接続する際は別途処理を書いてください
+    # 植物を生成し、接続します　memo: 引数にとりあえずdisplay_nameをいれておきます
     def register_plant(self, display_name):
-        self.user_data.add_plant(display_name)
+        msg = []
+        if self.connecting():
+            msg.extend(self.disconnect())
 
+        plant = self.__plant = self.user_data.add_plant(display_name)
+        plant.push_message = self.push_message
+        msg.append(plant.say_nice_to_meet_you())
+        return msg
+
+    # 植物を削除します
     def delete_plant(self, display_name):
+        msg = []
         if self.__plant.display_name == display_name:
-            self.disconnect()
+            msg.extend(self.disconnect())
+
         self.user_data.remove_plant(display_name)
+        return msg
 
     # 要求された名前から対応する植物を再生します
-    # 既に植物と接続している場合は上書きします
-    # disconnectの処理を挟みたいなら利用側で書いてください
     def connect(self, name, event):
         new_plant = self.user_data.reanimate_plant(name)
         if new_plant is None:
