@@ -20,7 +20,7 @@ class ExampleResponce(SpeechCenter):
         elif user_text in self.examples:
             return self.examples[user_text](plant)
         else:
-            return "..?"
+            return "%s: ..?" % plant.display_name
 
     def report_weather_forecast(self, postal_code):
         weather = WeatherForecast.get_weather(postal_code)
