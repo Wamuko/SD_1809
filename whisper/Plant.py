@@ -1,5 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
+import Sensor
 
 WaterThreshold = 60
 LuminosityThreshold = 900
@@ -32,7 +33,8 @@ class Plant:
         self.push_message = None
 
         executor = ThreadPoolExecutor(2)
-        self.__listening_thread = executor.submit(self.__sensor_buf.start)
+        self.__listening_thread = executor.submit(self.__sensor_buf.start,
+                                                  Sensor.loop)
 
     def update(self):
         return None
@@ -54,9 +56,8 @@ class Plant:
 
     # センサーバッファのfetchspanを書き換えます
     def set_beacon_buf_span(self, now):
-        if 14401 < (int(datetime.now().strftime('%s')) - self.listen_beacon[0]
-                    ) and self.listen_beacon[1] is 1:
+        if 14401 < (int(datetime.now().strftime('%s')) -
+                    self.listen_beacon[0]) and self.listen_beacon[1] is 1:
             self.__sensor_buf.fetch_span = self.__sensor_buf.ECO_FETCH_SPAN
         else:
             self.__sensor_buf.fetch_span = self.__sensor_buf.DEFAULT_FETCH_SPAN
-
