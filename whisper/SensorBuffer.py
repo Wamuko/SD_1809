@@ -53,7 +53,7 @@ class SensorBuffer:
         return ret
 
     def get_current_condition(self):
-        
+        return self.__fetch_data(int(datetime.now().strftime('%s')))
 
     def start(self, loop_func):
         print("thread start")
@@ -62,10 +62,10 @@ class SensorBuffer:
         child_proc.start()
 
         th = self.__listening_thread = threading.Thread(
-            target=self.__listening_loop, args=(parent_conn, ))
+            target=self.__listening_loop)
         th.start()
 
-    def __listening_loop(self, parent_conn):
+    def __listening_loop(self):
         global ProcessEnd
         print("loop start")
         try:
@@ -73,7 +73,7 @@ class SensorBuffer:
                 unix_time_now = int(datetime.now().strftime('%s'))
                 if self.last_fetch_time is None or unix_time_now - self.last_fetch_time > self.fetch_span:
                     try:
-                        self.__fetch_data( unix_time_now)
+                        self.__fetch_data(unix_time_now)
                         if ProcessEnd:
                             break
 
