@@ -58,10 +58,14 @@ class Plant:
             self.__speech_center.report_weather_forecast(postal_code))
 
     def needWater(self):
-        return self.__sensor_buf.get_humidity() >= 800
+        hum = self.__sensor_buf.get_humidity()
+        print("hum %d" % hum)
+        return hum >= 800
 
     def needLuminesity(self):
-        return self.__sensor_buf.get_luminosity() < 750
+        lum = self.__sensor_buf.get_luminosity()
+        print("lum %d" % lum)
+        return lum < 100
 
     # センサーバッファのfetchspanを書き換えます
     def set_beacon_buf_span(self, now):
