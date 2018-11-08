@@ -39,7 +39,7 @@ class BeaconWhisperEvent:
     def set_beacon(self, event):
         # ビーコンのOnとOffを変更する
         react = event.postback.data
-        if react is 'set_beacon_on':
+        if react == 'set_beacon_on':
             self.__user_data.set_use_line_beacon(1)
             self.__line_bot_api.reply_message(
                 event.reply_token,
@@ -47,7 +47,7 @@ class BeaconWhisperEvent:
                     text='Beacon EcoをONに設定しました'
                 )
             )
-        elif react is 'set_beacon_off':
+        elif react == 'set_beacon_off':
             self.__user_data.set_use_line_beacon(2)
             self.__line_bot_api.reply_message(
                 event.reply_token,
@@ -69,7 +69,7 @@ class BeaconWhisperEvent:
             self.__line_bot_api.reply_message(event.reply_token, template_message)
 
     def readBeaconConfig(self):
-        if self.__user_data.json_data['use_line_beacon'] is 1:
+        if self.__user_data.json_data['use_line_beacon'] == 1:
             return True
         else:
             return False

@@ -56,7 +56,6 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 from UserData import UserData
 from PlantAnimator import PlantAnimator
 from beaconWhisperEvent import BeaconWhisperEvent
-from datetime import datetime
 
 user_data = UserData()
 
@@ -338,7 +337,7 @@ def handle_postback(event):
 # ビーコンがかざされたときに呼ばれる処理
 @handler.add(BeaconEvent)
 def handle_beacon(event):
-    if plant_animator.listen_beacon_span(int(datetime.now().strftime('%s'))):
+    if plant_animator.listen_beacon_span():
         beacon_whisper_event.activation_msg(event)
         if user_data.json_data['use_line_beacon'] is 1:
             line_bot_api.reply_message(
@@ -346,7 +345,7 @@ def handle_beacon(event):
                 TextSendMessage(
                     text='おかえりなさい！'
                          ))
-            plant_animator.listen_beacon(int(datetime.now().strftime('%s')), user_data.json_data['use_line_beacon'])
+            plant_animator.listen_beacon(user_data.json_data['use_line_beacon'])
 
 import time
 

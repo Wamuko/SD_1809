@@ -23,6 +23,7 @@ class PlantAnimator:
         self.__plant = None
         self.tell_weather = False
         self.push_message = None
+        self.__listen_beacon_datetime = None
 
     @property
     def plant(self):
@@ -81,17 +82,20 @@ class PlantAnimator:
         else:
             return None
 
-    # ユーザがビーコンの近くにいたら呼ばれます
-    def listen_beacon(self, now, beacon_config):
-        self.__plant.listen_beacon = (now, beacon_config)
+    # ユーザがビーコンの近くかつ、コンフィグ設定がOnの時に呼ばれます
+    def listen_beacon(self, beacon_config):
+        if beacon_config ==  1:
+            self.__listen_beacon_datetime = datetime.now()
 
     # ユーザのビーコンが一度呼ばれたらそれから60分は呼ばれないようにするためのパーツ
-    def listen_beacon_span(self, now):
-        if self.__plant.listen_beacon[0] is None or (
-                now - self.__plant.listen_beacon[0]) < 3600:
-            return False
-        else:
+    def listen_beacon_span(self):
+        if self.__listen_beacon_datetime is None:
             return True
+        elif 3600 < (datetime.now() - self.__listen_beacon_datetime).total_seconds():
+            return True
+        else:
+            return False 
+        
 
     # 植物の状態の更新をします
     def update(self):
@@ -107,7 +111,7 @@ class PlantAnimator:
             self.tell_weather = True
         if second == 0:
             if self.connecting():
-                self.__plant.set_beacon_buf_span()
+                self.__plant.set_beacon_buf_span(self.__listen_beacon_datetime)
 
     def __report_weather_forecast(self):
         if self.connecting():

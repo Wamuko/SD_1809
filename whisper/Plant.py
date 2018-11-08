@@ -1,5 +1,5 @@
-from datetime import datetime
 import Sensor
+from datetime import datetime
 
 WaterThreshold = 60
 LuminosityThreshold = 900
@@ -18,7 +18,6 @@ class Plant:
             luminosity_threshold=LuminosityThreshold,
             temperture_min_relax=TempertureMinRelax,
             temperture_max_relax=TempertureMaxRelax,
-            listen_beacon=(None, 0),
     ):
         self.display_name = display_name
         self.name = name
@@ -28,7 +27,6 @@ class Plant:
         self.luminosity_threshold = luminosity_threshold
         self.temperture_min_relax = temperture_min_relax
         self.temperture_max_relax = temperture_max_relax
-        self.listen_beacon = listen_beacon
         self.push_message = None
 
         self.__sensor_buf.start(Sensor.loop)
@@ -68,9 +66,8 @@ class Plant:
         return lum < 100
 
     # センサーバッファのfetchspanを書き換えます
-    def set_beacon_buf_span(self, now):
-        if 14401 < (int(datetime.now().strftime('%s')) -
-                    self.listen_beacon[0]) and self.listen_beacon[1] is 1:
+    def set_beacon_buf_span(self, listen_beacon_datetime):
+        if (datetime.now() - listen_beacon_datetime).total_seconds() < 14401:
             self.__sensor_buf.fetch_span = self.__sensor_buf.ECO_FETCH_SPAN
         else:
             self.__sensor_buf.fetch_span = self.__sensor_buf.DEFAULT_FETCH_SPAN
