@@ -80,6 +80,12 @@ class UserData:
         ys = self.json_data
         self.save_json(ys)
 
+    def set_user_id(self, user_id):
+        ys = cl.OrderedDict()
+        self.json_data["user_id"] = user_id
+        ys =self.json_data
+        self.save_json(ys)
+
     def save_json(self, ys):
         # jsonに書き込み
         base = os.path.dirname(os.path.abspath(__file__))

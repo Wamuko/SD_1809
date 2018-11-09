@@ -63,6 +63,7 @@ plant_animator = PlantAnimator(user_data, line_bot_api)
 beacon_whisper_event = BeaconWhisperEvent(line_bot_api,user_data)
 
 user_id = "U70418518785e805318db128d8014710e"
+user_id = user_data.json_data["user_id"]
 
 # =========================================================================
 
@@ -99,6 +100,19 @@ def callback():
         abort(400)
 
     return 'OK'
+
+# ユーザにフォローされた時のイベント
+@handler.add(FollowEvent)
+def follow_event(event):
+    global user_id 
+    user_id = event.source.user_id
+    user_data.set_user_id(user_id)
+    line_bot_api.reply_message(
+        event.reply_token, TextSendMessage(text="初めまして。whisperです！\nよろしくね(^^♪"))
+
+@handler.add(UnfollowEvent)
+def unfollow_event(event):
+    user_data.set_user_id('')    
 
 
 @handler.add(MessageEvent, message=TextMessage)
