@@ -110,10 +110,6 @@ def follow_event(event):
     line_bot_api.reply_message(
         event.reply_token, TextSendMessage(text="初めまして。whisperです！\nよろしくね(^^♪"))
 
-@handler.add(UnfollowEvent)
-def unfollow_event(event):
-    user_data.set_user_id('')    
-
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
