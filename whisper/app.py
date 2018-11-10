@@ -56,14 +56,26 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 from UserData import UserData
 from PlantAnimator import PlantAnimator
 from beaconWhisperEvent import BeaconWhisperEvent
+# ここでimport出来ないときは、pip install clova-cek-sdk をたたくこと
+import cek, jsonify
 
 user_data = UserData()
 
 plant_animator = PlantAnimator(user_data, line_bot_api)
 beacon_whisper_event = BeaconWhisperEvent(line_bot_api,user_data)
 
-user_id = "U70418518785e805318db128d8014710e"
+# user_idでエラーをはく場合は、下のidベタ打ちを採用してください
+# user_id = "U70418518785e805318db128d8014710e"
 user_id = user_data.json_data["user_id"]
+
+# =========================================================================
+# =========================Clova用のフィールド==============================
+# application_id : lineのClovaアプリ？でスキルを登録した際のExtension_IDを入れる
+clova = cek.Clova(
+    application_id = "",
+    deault_language = "ja",
+    debug_mode = True
+)
 
 # =========================================================================
 
@@ -101,6 +113,15 @@ def callback():
 
     return 'OK'
 
+# /clova に対してのPOSTリクエストを受け付けるサーバーを立てる
+@app.route('/clova', methods=['POST'])
+def my_service():
+    body_dict = clova.route(body=request.data, header=request.headers)
+    response = jsonify(body_dict)
+    response.headers['Content-Type'] = 'application/json;charset-UTF-8'
+    return response
+
+# 以下はcallback用のhandler
 # ユーザにフォローされた時のイベント
 @handler.add(FollowEvent)
 def follow_event(event):
@@ -161,7 +182,7 @@ def handle_text_message(event):
                 TextSendMessage(text="この会話から退出させることはできません"))
 
     # ユーザからビーコンの設定を行う
-    elif text == 'beacon':
+    elif text in {'beacon', 'ビーコン'}:
         beacon_whisper_event.config_beacon_msg(event)
     elif text in {"help", "ヘルプ"}:
         reply(help_msg())
@@ -350,12 +371,36 @@ def handle_beacon(event):
     if plant_animator.listen_beacon_span():
         beacon_whisper_event.activation_msg(event)
         if user_data.json_data['use_line_beacon'] is 1:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(
-                    text='おかえりなさい！'
-                         ))
+            # ビーコンがエコモード中ならずっと家にいたと判断して挨拶はしない
+            if plant_animator.check_beacon_eco_time() == False:
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(
+                        text='おかえりなさい！'
+                             ))
             plant_animator.listen_beacon(user_data.json_data['use_line_beacon'])
+
+# 以下にClova用のイベントを書き込む
+
+# 起動時の処理
+@clova.handle.launch
+def launch_request_handler(clova_request):
+    welcome_japanese = cek.Message(message="おかえりなさい！", language="ja")
+    response = clova.response([welcome_japanese])
+    return response
+
+# Communicateの発火箇所
+# debugのために、defaultにしているが本来は
+# @clova.handle.intent("Communication") と書いて、Clova アプリの方でインテントを設定しておく必要がある
+# ToDo: Connect処理を設定してあげないと不親切、LINE Clavaアプリで予冷応答を細かく設定（今回は時間が足りないかも）
+@clova.handle.default
+def communication(clova_request):
+    msg = plant_animator.communicate("調子はどう？", None)
+    if msg is None:
+        msg = "誰ともお話ししていません"
+    message_japanese = cek.Message(message=msg, language="ja")
+    response = clova.response([message_japanese])
+    return response
 
 import time
 
