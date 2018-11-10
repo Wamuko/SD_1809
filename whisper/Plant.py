@@ -1,5 +1,4 @@
 import Sensor
-from datetime import datetime
 
 WaterThreshold = 60
 LuminosityThreshold = 900
@@ -66,8 +65,8 @@ class Plant:
         return lum < 100
 
     # センサーバッファのfetchspanを書き換えます
-    def set_beacon_buf_span(self, listen_beacon_datetime):
-        if (datetime.now() - listen_beacon_datetime).total_seconds() < 14401:
+    def set_beacon_buf_span(self, check_beacon_eco_time):
+        if check_beacon_eco_time:
             self.__sensor_buf.fetch_span = self.__sensor_buf.ECO_FETCH_SPAN
         else:
             self.__sensor_buf.fetch_span = self.__sensor_buf.DEFAULT_FETCH_SPAN

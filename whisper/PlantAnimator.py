@@ -89,12 +89,11 @@ class PlantAnimator:
 
     # ユーザのビーコンが一度呼ばれたらそれから60分は呼ばれないようにするためのパーツ
     def listen_beacon_span(self):
-        if self.__listen_beacon_datetime is None:
-            return True
-        elif 3600 < (datetime.now() - self.__listen_beacon_datetime).total_seconds():
-            return True
-        else:
-            return False 
+        self.__listen_beacon_datetime is None or 3600 < (datetime.now() - self.__listen_beacon_datetime).total_seconds()
+    
+    # センサがエコモードになってから（listen_beaconが呼ばれてから）4時間たったかを確認
+    def check_beacon_eco_time(self):
+        return (datetime.now() - self.__listen_beacon_datetime).total_seconds() < 14401
         
 
     # 植物の状態の更新をします
@@ -111,7 +110,7 @@ class PlantAnimator:
             self.tell_weather = True
         if second == 0:
             if self.connecting():
-                self.__plant.set_beacon_buf_span(self.__listen_beacon_datetime)
+                self.__plant.set_beacon_buf_span(self.check_beacon_eco_time())
 
     def __report_weather_forecast(self):
         if self.connecting():
