@@ -9,9 +9,6 @@ import time
 if not __name__ == "__main__":
     import Sensor
 
-# HOST = "localhost"
-# PORT = 51000
-# NUM_THREAD = 2
 BUFFER_MAX_LEN = 10000
 RECV_BUFFER_SIZE = 1024
 
@@ -37,7 +34,7 @@ class SensorBuffer:
         ret = 0
         print(self.__humidity)
         if len(self.__humidity) > 0:
-            ret = self.__humidity[-1]
+            ret = self.__humidity[-1][1]
 
         lock.release()
         return ret
@@ -47,7 +44,7 @@ class SensorBuffer:
         lock.acquire()
         ret = 0
         if len(self.__luminosity) > 0:
-            ret = self.__luminosity[-1]
+            ret = self.__luminosity[-1][1]
 
         lock.release()
         return ret
@@ -93,11 +90,13 @@ class SensorBuffer:
         conn.send(b"1")
         hum, lum = conn.recv()
         print("%d %d" % (hum, lum))
+
         lock = self.__lock
         lock.acquire()
-        self.__humidity.append(hum)
-        self.__luminosity.append(lum)
+        self.__humidity.append((fetch_time,hum))
+        self.__luminosity.append((fetch_time, lum))
         lock.release()
+
         return hum, lum
 
 
