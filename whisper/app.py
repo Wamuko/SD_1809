@@ -73,8 +73,8 @@ user_id = user_data.json_data["user_id"]
 # application_id : lineのClovaアプリ？でスキルを登録した際のExtension_IDを入れる
 clova = cek.Clova(
     application_id = "com.clova.whisper",
-    deault_language = "ja",
-    debug_mode = True
+    default_language = "ja",
+    debug_mode = False
 )
 
 # =========================================================================
