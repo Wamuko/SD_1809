@@ -436,7 +436,7 @@ def define_clova_handler(intent, text):
 
     return handler
 
-with open("clova_setting.json") as f:
+with open("data/clova_setting.json") as f:
     js = json.load(f)
     intent_text_dict = js["intent_text_dict"]
 
