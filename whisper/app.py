@@ -5,6 +5,7 @@ import os
 import sys
 import tempfile
 import concurrent.futures as futures
+import json
 
 from argparse import ArgumentParser
 
@@ -420,6 +421,9 @@ def no_response(clova_request):
 #     response = clova.response([message_japanese])
 #     return response
 
+#--------------------------
+# start Clova setting
+#--------------------------
 def define_clova_handler(intent, text):  
     @clova.handle.intent(intent)
     def handler(clova_request):
@@ -432,15 +436,17 @@ def define_clova_handler(intent, text):
 
     return handler
 
-intent_msg_dict = {
-    "AskWater" : "水はいる？",
-    "AskLuminous" : "日当たりはどう？",
-    "AskStatus" : "調子はどう？"
-}
+with open("clova_setting.json") as f:
+    js = json.load(f)
+    intent_text_dict = js["intent_text_dict"]
 
 # Clovaに対するイベントハンドラを設定
-for k ,v in intent_msg_dict.items():
+for k ,v in intent_text_dict.items():
     define_clova_handler(k, v)
+
+#-------------------------------
+# end Clova setting
+#-------------------------------
 
 import time
 

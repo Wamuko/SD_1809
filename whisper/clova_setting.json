@@ -1,0 +1,7 @@
+{
+    "intent_text_dict":{
+        "AskWater" : "水はいる？",
+        "AskLuminous" : "日当たりはどう？",
+        "AskStatus" : "調子はどう？"
+    }
+}
