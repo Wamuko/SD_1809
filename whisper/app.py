@@ -434,7 +434,7 @@ def define_clova_handler(intent, msg):
 
 intent_msg_dict = {
     "AskWater" : "水はいる？",
-    "AskLuminous" : "日当たりはどう？"
+    "AskLuminous" : "日当たりはどう？",
     "AskStatus" : "調子はどう？"
 }
 
