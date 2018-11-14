@@ -387,7 +387,8 @@ def launch_request_handler(clova_request):
 # debugのために、defaultにしているが本来は
 # @clova.handle.intent("Communication") と書いて、Clova アプリの方でインテントを設定しておく必要がある
 # ToDo: Connect処理を設定してあげないと不親切、LINE Clavaアプリで予冷応答を細かく設定（今回は時間が足りないかも）
-@clova.handle.default
+# @clova.handle.default
+@clova.handle.intent("AskStatus")
 def communication(clova_request):
     msg = plant_animator.communicate("調子はどう？", None)
     if msg is None:
@@ -395,6 +396,25 @@ def communication(clova_request):
     message_japanese = cek.Message(message=msg, language="ja")
     response = clova.response([message_japanese])
     return response
+
+@clova.handle.intent("AskWater")
+def ask_water(clova_request):
+    msg = plant_animator.communicate("水はいる？", None)
+    if msg is None:
+        msg = "誰ともお話ししていません"
+    message_japanese = cek.Message(message=msg, language="ja")
+    response = clova.response([message_japanese])
+    return response
+
+@clova.handle.intent("AskLuminous")
+def ask_luminous(clova_request):
+    msg = plant_animator.communicate("日当たりはどう？", None)
+    if msg is None:
+        msg = "誰ともお話ししていません"
+    message_japanese = cek.Message(message=msg, language="ja")
+    response = clova.response([message_japanese])
+    return response
+ 
 
 import time
 
