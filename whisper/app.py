@@ -420,10 +420,10 @@ def no_response(clova_request):
 #     response = clova.response([message_japanese])
 #     return response
 
-def define_clova_handler(intent, msg):  
+def define_clova_handler(intent, text):  
     @clova.handle.intent(intent)
     def handler(clova_request):
-        msg = plant_animator.communicate(msg, None)
+        msg = plant_animator.communicate(text, None)
         if msg is None:
             msg = "誰ともお話ししていません"
         message_japanese = cek.Message(message=msg, language="ja")
