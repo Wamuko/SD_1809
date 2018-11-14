@@ -57,7 +57,8 @@ from UserData import UserData
 from PlantAnimator import PlantAnimator
 from beaconWhisperEvent import BeaconWhisperEvent
 # ここでimport出来ないときは、pip install clova-cek-sdk をたたくこと
-import cek, jsonify
+import cek
+from flask import jsonify
 
 user_data = UserData()
 
