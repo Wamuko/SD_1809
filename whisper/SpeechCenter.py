@@ -39,7 +39,7 @@ class ExampleResponce(SpeechCenter):
         return "%s: またね" % plant.display_name
 
     @staticmethod
-    def respond_health(plant):
+    def respond_health(plant : Plant):
         response_msg = ""
         plant.sense_condition()
         need_water = plant.needWater()

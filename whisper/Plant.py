@@ -55,7 +55,7 @@ class Plant:
             self.__speech_center.report_weather_forecast(postal_code))
 
 
-    def sense_condtion(self):
+    def sense_condition(self):
         """新しいセンサ値を取得します"""
         self.__sensor_buf.get_current_condition()
 
