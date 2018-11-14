@@ -54,13 +54,18 @@ class Plant:
         self.push_message(
             self.__speech_center.report_weather_forecast(postal_code))
 
+
+    def sense_condtion(self):
+        """新しいセンサ値を取得します"""
+        self.__sensor_buf.get_current_condition()
+
     def needWater(self):
-        hum, _ = self.__sensor_buf.get_current_condition()
+        hum, _ = self.__sensor_buf.get_current_condition(False)
         print("hum %d" % hum)
         return hum >= self.water_threshold
 
     def needLuminesity(self):
-        _, lum = self.__sensor_buf.get_current_condition()
+        _, lum = self.__sensor_buf.get_current_condition(False)
         print("lum %d" % lum)
         return lum < self.luminosity_threshold
 
