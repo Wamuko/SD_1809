@@ -57,12 +57,12 @@ class Plant:
     def needWater(self):
         hum, _ = self.__sensor_buf.get_current_condition()
         print("hum %d" % hum)
-        return hum >= 800
+        return hum >= self.water_threshold
 
     def needLuminesity(self):
         _, lum = self.__sensor_buf.get_current_condition()
         print("lum %d" % lum)
-        return lum < 100
+        return lum < self.luminosity_threshold
 
     # センサーバッファのfetchspanを書き換えます
     def set_beacon_buf_span(self, check_beacon_eco_time):
