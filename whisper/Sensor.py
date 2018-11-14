@@ -20,7 +20,7 @@ def debug_main():
 
         ser.write(sig)
 
-        print(read())
+        print(try_read())
 
 
 def loop(conn):
