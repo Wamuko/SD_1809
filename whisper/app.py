@@ -72,7 +72,7 @@ user_id = user_data.json_data["user_id"]
 # =========================Clova用のフィールド==============================
 # application_id : lineのClovaアプリ？でスキルを登録した際のExtension_IDを入れる
 clova = cek.Clova(
-    application_id = "com.clova.whisper",
+    application_id = "com.clovatalk.whisper",
     default_language = "ja",
     debug_mode = False
 )
@@ -312,13 +312,6 @@ def handle_file_message(event):
             TextSendMessage(text='Save file.'),
             TextSendMessage(text=request.host_url + os.path.join('static', 'tmp', dist_name))
         ])
-
-
-@handler.add(FollowEvent)
-def handle_follow(event):
-    line_bot_api.reply_message(
-        event.reply_token, TextSendMessage(text='Got follow event'))
-
 
 @handler.add(UnfollowEvent)
 def handle_unfollow():
