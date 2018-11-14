@@ -41,7 +41,7 @@ class ExampleResponce(SpeechCenter):
     @staticmethod
     def respond_health(plant):
         response_msg = ""
-        plant.sence_condition()
+        plant.sense_condition()
         need_water = plant.needWater()
         need_light = plant.needLuminesity()
         if need_water:
@@ -59,7 +59,7 @@ class ExampleResponce(SpeechCenter):
 
     @staticmethod
     def respond_water_demand(plant):
-        plant.sence_condition()
+        plant.sense_condition()
         response_msg = ""
         if plant.needWater():
             response_msg += "水が欲しいよ！"
@@ -71,7 +71,7 @@ class ExampleResponce(SpeechCenter):
     @staticmethod
     def respond_light_demand(plant):
         response_msg = ""
-        plant.sence_condition()
+        plant.sense_condition()
         if plant.needLuminesity():
             response_msg += "少し暗いかな"
         else:
