@@ -49,8 +49,11 @@ class SensorBuffer:
         lock.release()
         return ret
 
-    def get_current_condition(self):
-        return self.__fetch_data(datetime.now().timestamp())
+    def get_current_condition(self, fetch=True):
+        if fetch:
+            return self.get_humidity(), self.get_luminosity()
+        else:
+            return self.__fetch_data(datetime.now().timestamp())
 
     def start(self, loop_func):
         print("thread start")
