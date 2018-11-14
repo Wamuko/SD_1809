@@ -1,4 +1,4 @@
-import Plant
+from Plant import Plant
 
 class PseudoPlant(Plant):
     def __init__(self, display_name, name, speech_center):
@@ -10,6 +10,7 @@ class PseudoPlant(Plant):
 
     def report_wether_forecast(self, postal_code):
         return self.__speech_center.report_wether_forecast(postal_code)
- 
+
+    
 
     
