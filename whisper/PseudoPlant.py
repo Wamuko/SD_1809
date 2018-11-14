@@ -17,4 +17,21 @@ class PseudoPlant(Plant):
     def needLuminesity(self):
         return self.dark
 
+
+import SpeechCenter 
+
+dis_name = "ダミー001"
+name = "ダミー001"
+kls = SpeechCenter.ExampleResponce 
+center = kls()
+ex = center.examples
+ex["調子はどう？"] = kls.respond_health
+ex["水はいる？"] = kls.respond_water_demand
+ex["日当たりはどう？"] = kls.respond_light_demand
+ex["気温はどう？"] = kls.respond_temperture
+
+plant = PseudoPlant(dis_name, name, center)
+
+
+
     
