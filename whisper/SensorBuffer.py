@@ -50,7 +50,7 @@ class SensorBuffer:
         return ret
 
     def get_current_condition(self, fetch=True):
-        if fetch:
+        if not fetch:
             return self.get_humidity(), self.get_luminosity()
         else:
             return self.__fetch_data(datetime.now().timestamp())
