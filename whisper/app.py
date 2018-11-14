@@ -383,6 +383,11 @@ def launch_request_handler(clova_request):
     response = clova.response([welcome_japanese])
     return response
 
+@clova.handle.default
+def no_response(clova_request):
+    return clova.response("ごめんなさい、認識できませんでした")
+
+
 # Communicateの発火箇所
 # debugのために、defaultにしているが本来は
 # @clova.handle.intent("Communication") と書いて、Clova アプリの方でインテントを設定しておく必要がある
