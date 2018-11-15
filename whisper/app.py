@@ -144,7 +144,9 @@ def handle_text_message(event):
     reply_texts = create_reply(split_msg, event, source="text") 
 
     if reply_texts is not None:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_texts))
+        reply_texts = (reply_texts,) if isinstance(reply_texts, str) else reply_texts
+        msgs = [TextSendMessage(text=s) for s in reply_texts]
+        line_bot_api.reply_message(event.reply_token, msgs)
 
 
 @handler.add(MessageEvent, message=LocationMessage)
