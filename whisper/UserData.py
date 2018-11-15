@@ -94,7 +94,7 @@ class UserData:
             json.dump(ys, fw, indent=4)
 
     def list_plant_name(self):
-        return self.plants.keys()
+        return tuple(self.plants.keys())
 
         
     def __create_plant(self, json_object):
