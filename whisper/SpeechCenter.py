@@ -30,13 +30,13 @@ class ExampleResponce(SpeechCenter):
             return "今日はあまり天気が良くないね"
 
     def say_nice_to_meet_you(self, plant: Plant):
-        return "%s: はじめまして!" % plant.display_name
+        return "はじめまして!"
 
     def say_hello(self, plant: Plant):
-        return "%s: なに？" % plant.display_name
+        return "なに？" 
 
     def respond_see_you(self, plant: Plant):
-        return "%s: またね" % plant.display_name
+        return "またね" 
 
     @staticmethod
     def respond_health(plant : Plant):

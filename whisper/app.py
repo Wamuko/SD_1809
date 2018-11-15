@@ -364,8 +364,11 @@ def create_reply(split_text, event=None, source=None):
         #     )
     else:
         text = plant_animator.communicate(text)
-        if not plant_animator.connecting() and source == "text":
-            text = [text, help_msg]
+        if source == "text":
+            if plant_animator.connecting():
+                text = plant_animator.plant.display_name + ": " + text 
+            else:
+                text = [text, help_msg]
 
         return text
         # line_bot_api.reply_message(
@@ -386,7 +389,12 @@ def launch_request_handler(clova_request):
 
 @clova.handle.default
 def no_response(clova_request):
-    return clova.response("ごめんなさい、認識できませんでした")
+    if plant_animator.connecting():
+        text = "%s よくわかんないや" % plant_animator.plant.display_name
+    else:
+        text = "ごめんなさい、認識できませんでした"
+
+    return clova.response(text)
 
 
 # Communicateの発火箇所
