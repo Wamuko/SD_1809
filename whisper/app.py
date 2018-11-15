@@ -141,7 +141,7 @@ def handle_text_message(event):
     text = event.message.text
     split_msg = re.split('[\ |　]', text)
     # split_msg = text.split(' ')
-    reply_texts = create_reply(split_msg, event) 
+    reply_texts = create_reply(split_msg, event, source="text") 
 
     if reply_texts is not None:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_texts))
@@ -427,7 +427,7 @@ def define_clova_handler(intent, text):
     def handler(clova_request):
         # バグがあるかもしれない
         # textの形式次第で
-        msg = create_reply([text])
+        msg = create_reply([text], source="clova")
        # msg = plant_animator.communicate(text, None)
         if msg is None:
             msg = "誰ともお話ししていません"
