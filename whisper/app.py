@@ -328,6 +328,10 @@ def create_reply(split_text, event=None, source=None):
         else:
             return "メッセージが不正です", "例：登録 `植物の名前`"
 
+    # ランダムに呼び出す
+    elif text == "誰かを呼んで":
+        return plant_animator.clova_random_connect()
+
     # 植物との接続命令
     elif split_text[0] in {'ハロー', 'hello', 'こんにちは', 'こんばんは', 'おはよう', 'ごきげんよう'}:
         if len(split_text) == 2:
