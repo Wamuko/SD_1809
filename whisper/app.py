@@ -364,7 +364,7 @@ def create_reply(split_text, event=None, source=None):
         #     )
     else:
         text = plant_animator.communicate(text)
-        if source == "text":
+        if not plant_animator.connecting() and source == "text":
             text = [text, help_msg]
 
         return text
