@@ -65,6 +65,7 @@ class PlantAnimator:
         if not self.connecting() and event is not None:
             return "誰ともお話ししてないよ"
         else:
+            print("disconnect")
             pl = self.__plant
             self.__plant = None
             if event is not None:
