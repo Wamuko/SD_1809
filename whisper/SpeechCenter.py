@@ -1,7 +1,10 @@
 import numpy as np
 from WeatherForecast import WeatherForecast
 from Plant import Plant
+import random
 
+def sample_one(*args):
+    return random.sample(args, 1)[0]
 
 class SpeechCenter:
     def make_response(self, plant):
@@ -20,7 +23,9 @@ class ExampleResponce(SpeechCenter):
         elif user_text in self.examples:
             return self.examples[user_text](plant)
         else:
-            return "%s: ..?" % plant.display_name
+            ret = "%s: "
+            ret += sample_one(" ..?", "なに言っているの？", "よくわかんないや")
+            return ret % plant.display_name
 
     def report_weather_forecast(self, postal_code):
         weather = WeatherForecast.get_weather(postal_code)
@@ -62,9 +67,9 @@ class ExampleResponce(SpeechCenter):
         plant.sense_condition()
         response_msg = ""
         if plant.needWater():
-            response_msg += "水が欲しいよ！"
+            response_msg += sample_one("水が欲しいよ！", "うん！", "のどが渇いたな")
         else:
-            response_msg += "もう十分だよ"
+            response_msg += sample_one("もう十分だよ", "いらないよー", "大丈夫だよ、ありがとう")
 
         return response_msg
 
@@ -73,9 +78,9 @@ class ExampleResponce(SpeechCenter):
         response_msg = ""
         plant.sense_condition()
         if plant.needLuminesity():
-            response_msg += "少し暗いかな"
+            response_msg += sample_one("少し暗いかな", "明るいところに行きたいな", "光が欲しいよ")
         else:
-            response_msg += "ちょうどいいよ！"
+            response_msg += sample_one("ちょうどいいよ！", "気持ちいいよ！", "十分だよ")
 
         return response_msg
 
