@@ -6,6 +6,7 @@ import sys
 import tempfile
 import concurrent.futures as futures
 import json
+import re
 
 from argparse import ArgumentParser
 
@@ -138,7 +139,8 @@ def follow_event(event):
 def handle_text_message(event):
     print("text message")
     text = event.message.text
-    split_msg = text.split(' ')
+    split_msg = re.split('[\ |　]', text)
+    # split_msg = text.split(' ')
     reply_texts = create_reply(split_msg, event) 
 
     if reply_texts is not None:
