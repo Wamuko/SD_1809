@@ -37,10 +37,10 @@ class ExampleResponce(SpeechCenter):
         return "はじめまして!"
 
     def say_hello(self, plant: Plant):
-        return "なに？" 
+        return sample_one( "なに？", "呼んだ？") 
 
     def respond_see_you(self, plant: Plant):
-        return "またね" 
+        return sample_one(  "またね", "じゃあね", "バイバイ") 
 
     @staticmethod
     def respond_health(plant : Plant):
