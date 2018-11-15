@@ -283,7 +283,7 @@ lines = (
             "会話の終了", '　またね')
 help_msg = os.linesep.join(lines)
 
-def create_reply(split_text, event=None):
+def create_reply(split_text, event=None, source=None):
     """
     テキストとして受け取ったメッセージとclovaから受け取ったメッセージを同列に扱うために
     応答メッセージ生成へのディスパッチ部分を抜き出す
@@ -359,8 +359,11 @@ def create_reply(split_text, event=None):
         #         )
         #     )
     else:
-        return plant_animator.communicate(text)
-        
+        text = plant_animator.communicate(text)
+        if source == "text":
+            text = [text, help_msg]
+
+        return text
         # line_bot_api.reply_message(
         #     event.reply_token, TextSendMessage(text=event.message.text))
 

@@ -80,7 +80,7 @@ class PlantAnimator:
         if self.connecting():
             return self.__plant.chat(text)
         else:
-            return None
+            return "誰ともお話ししてないよ"
 
     # ユーザがビーコンの近くかつ、コンフィグ設定がOnの時に呼ばれます
     def listen_beacon(self, beacon_config):
