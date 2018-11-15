@@ -359,7 +359,7 @@ def create_reply(split_text, event=None):
         #         )
         #     )
     else:
-        return plant_animator.communicate(text, event)
+        return plant_animator.communicate(text)
         
         # line_bot_api.reply_message(
         #     event.reply_token, TextSendMessage(text=event.message.text))

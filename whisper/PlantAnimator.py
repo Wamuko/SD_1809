@@ -61,24 +61,22 @@ class PlantAnimator:
             return new_plant.say_hello()
 
     # 植物との接続を切断します
-    def disconnect(self, event=None):
-        if not self.connecting() and event is not None:
+    def disconnect(self):
+        if not self.connecting():
             return "誰ともお話ししてないよ"
         else:
             print("disconnect")
             pl = self.__plant
             self.__plant = None
-            if event is not None:
-                return pl.say_see_you()
-            else:
-                return None
+            return pl.say_see_you()
+            
 
     # 植物と接続しているか確認します
     def connecting(self):
         return self.__plant is not None
 
     # Lineのテキストを植物に伝え、応答を受け取ります
-    def communicate(self, text, event):
+    def communicate(self, text):
         if self.connecting():
             return self.__plant.chat(text)
         else:
