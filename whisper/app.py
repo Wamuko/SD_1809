@@ -138,10 +138,12 @@ def follow_event(event):
 def handle_text_message(event):
     text = event.message.text
     split_msg = text.split(' ')
-    reply_text = create_reply(split_msg, event) 
+    reply_texts = create_reply(split_msg, event) 
 
-    if reply_text is not None:
-        line_bot_api.reply_message(reply_text)
+    if reply_texts is not None:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_texts))
+
+        
     # # 返信を行います
     # # 引数がNoneの場合は何も行いません
     # def reply(msgs):
