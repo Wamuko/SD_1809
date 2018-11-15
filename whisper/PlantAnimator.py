@@ -14,6 +14,7 @@ from linebot import (
     LineBotApi,
     WebhookHandler,
 )
+import random
 
 
 class PlantAnimator:
@@ -74,6 +75,11 @@ class PlantAnimator:
     # 植物と接続しているか確認します
     def connecting(self):
         return self.__plant is not None
+
+    # Clovaに呼ばれたときにランダムに接続を行う
+    def clova_random_connect(self):
+        return self.connect(random.choice(self.user_data.list_plant_name()))
+        
 
     # Lineのテキストを植物に伝え、応答を受け取ります
     def communicate(self, text):
