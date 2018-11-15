@@ -138,6 +138,7 @@ def follow_event(event):
 def handle_text_message(event):
     text = event.message.text
     split_msg = text.split(' ')
+    reply_text = create_reply(split_msg, event) 
 
     # 返信を行います
     # 引数がNoneの場合は何も行いません
@@ -358,7 +359,7 @@ def handle_postback(event):
                     text='ありがとう^^'
                 )
             )
-    
+
     
 # ビーコンがかざされたときに呼ばれる処理
 @handler.add(BeaconEvent)
@@ -375,6 +376,100 @@ def handle_beacon(event):
                              ))
             plant_animator.listen_beacon(user_data.json_data['use_line_beacon'])
 
+#--------------------------------------
+# メッセージを生成するメソッドへのディスパッチャ
+#--------------------------------------
+ 
+lines = (
+            "植物の呼び出し", "  ハロー `植物の名前`",
+            "植物の登録:", "　登録 `植物の名前`",
+            "植物の削除", "　削除 `植物の名前`",
+            "会話の終了", '　またね')
+help_msg = os.linesep.join(lines)
+
+def create_reply(split_text, event=None):
+    """
+    テキストとして受け取ったメッセージとclovaから受け取ったメッセージを同列に扱うために
+    応答メッセージ生成へのディスパッチ部分を抜き出す
+    input: string[]
+    output: None or iterable<string>
+    """
+
+    text = split_text[0]
+    if text == 'bye':
+        if isinstance(event.source, SourceGroup):
+            line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='またね、今までありがとう'))
+            line_bot_api.leave_group(event.source.group_id)
+        elif isinstance(event.source, SourceRoom):
+            line_bot_api.reply_message(
+                event.reply_token, TextSendMessage(text='またね、今までありがとう'))
+            line_bot_api.leave_room(event.source.room_id)
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="この会話から退出させることはできません"))
+
+    # ユーザからビーコンの設定を行う
+    elif text in {'beacon', 'ビーコン'}:
+        return beacon_whisper_event.config_beacon_msg(event)
+    elif text in {"help", "ヘルプ"}:
+        return help_msg
+    elif text in {'またね', 'じゃあね', 'バイバイ'}:
+        return plant_animator.disconnect()
+
+    # 植物の生成を行う
+    elif text in {'登録', 'ようこそ'}:
+        if len(split_text) == 2:
+            name = split_text[1]
+            return plant_animator.register_plant(name)
+        elif len(split_text) == 1:
+            return "名前が設定されていません"
+        else:
+            return "メッセージが不正です", "例：登録 `植物の名前`"
+
+    # 植物との接続命令
+    elif split_text[0] in {'ハロー', 'hello', 'こんにちは', 'こんばんは', 'おはよう', 'ごきげんよう'}:
+        if len(split_text) == 2:
+            return plant_animator.connect(split_text[1])
+        elif len(split_text) == 1:
+            return "植物が選択されていません"
+        else:
+            return "メッセージが不正です：", "例：ハロー `植物の名前`"
+
+    # 植物を削除するときの命令
+    elif split_text[0] == {'削除'}:
+        if len(split_text) == 2:
+            return plant_animator.delete_plant(split_text[1])
+        elif len(split_text) == 1:
+            return "植物が選択されていません"
+        else:
+            return "メッセージが不正です：" , "例：削除 `植物の名前`"
+
+    # 植物を削除するときの命令
+        # if split_msg[1] is not None:        
+        #     confirm_template = ConfirmTemplate(text= split_msg[1] +"の情報を削除します\n本当によろしいですか？\n", actions=[
+        #         PostbackAction(label='Yes', data='delete_plant '+ split_msg[1], displayText='はい'),
+        #         PostbackAction(label='No', data='delete_plant_cancel '+ split_msg[1], displayText='いいえ'),
+        #     ])
+        #     template_message = TemplateSendMessage(
+        #         alt_text='Confirm alt text', template=confirm_template)
+        #     line_bot_api.reply_message(event.reply_token, template_message)
+        # else:
+        #     line_bot_api.reply_message(
+        #         event.reply_token,
+        #         TextSendMessage(
+        #             text='植物が選択されていません'
+        #         )
+        #     )
+    else:
+        return plant_animator.communicate(text, event)
+        
+        # line_bot_api.reply_message(
+        #     event.reply_token, TextSendMessage(text=event.message.text))
+
+
+    
 # 以下にClova用のイベントを書き込む
 
 # 起動時の処理
@@ -427,7 +522,10 @@ def no_response(clova_request):
 def define_clova_handler(intent, text):  
     @clova.handle.intent(intent)
     def handler(clova_request):
-        msg = plant_animator.communicate(text, None)
+        # バグがあるかもしれない
+        # textの形式次第で
+        msg = create_reply([text])
+       # msg = plant_animator.communicate(text, None)
         if msg is None:
             msg = "誰ともお話ししていません"
         message_japanese = cek.Message(message=msg, language="ja")

@@ -50,7 +50,7 @@ class PlantAnimator:
         return msg
 
     # 要求された名前から対応する植物を再生します
-    def connect(self, name, event):
+    def connect(self, name, event=None):
         new_plant = self.user_data.reanimate_plant(name)
         if new_plant is None:
             return "その名前の植物はいないよ"
