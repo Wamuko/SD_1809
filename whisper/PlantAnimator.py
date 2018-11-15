@@ -55,6 +55,7 @@ class PlantAnimator:
         if new_plant is None:
             return "その名前の植物はいないよ"
         else:
+            print("connect %s" % new_plant.display_name)
             new_plant.push_message = self.push_message
             self.__plant = new_plant
             return new_plant.say_hello()

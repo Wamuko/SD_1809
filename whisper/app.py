@@ -136,6 +136,7 @@ def follow_event(event):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
+    print("text message")
     text = event.message.text
     split_msg = text.split(' ')
     reply_texts = create_reply(split_msg, event) 
@@ -143,7 +144,7 @@ def handle_text_message(event):
     if reply_texts is not None:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_texts))
 
-        
+
     # # 返信を行います
     # # 引数がNoneの場合は何も行いません
     # def reply(msgs):
