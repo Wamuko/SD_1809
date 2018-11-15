@@ -140,111 +140,115 @@ def handle_text_message(event):
     split_msg = text.split(' ')
     reply_text = create_reply(split_msg, event) 
 
-    # 返信を行います
-    # 引数がNoneの場合は何も行いません
-    def reply(msgs):
-        if msgs is None:
-            pass
-        elif not isinstance(msgs, (list, tuple)):
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=msgs))
-        else:
-            line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=msg) for msg in msgs])
-
-    lines = (
-            "植物の呼び出し", "  ハロー `植物の名前`",
-            "植物の登録:", "　登録 `植物の名前`",
-            "植物の削除", "　削除 `植物の名前`",
-            "会話の終了", '　またね')
-
-    def help_msg():        
-        return os.linesep.join(lines)
-    # ユーザIDの取得
-    
-    # 送られてきた言葉が植物の名前だった場合は、それをキャッシュし「なに？」と返す
-    # if user_data.plant_exists(text):
-    #     current_plant = text
-    #     line_bot_api.reply_message(
-    #         event.reply_token, TextSendMessage(text='なに？'))
-    
-    # まずは現在アクティベートされている植物に対してCommunicateを投げる
-    # 追記：先にcommunicateするのは拙い。システム処理に関する言葉も植物に投げられることになる
-    # plant_animator.communicate(text, event)
-
-    if text == 'bye':
-        if isinstance(event.source, SourceGroup):
-            line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text='またね、今までありがとう'))
-            line_bot_api.leave_group(event.source.group_id)
-        elif isinstance(event.source, SourceRoom):
-            line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text='またね、今までありがとう'))
-            line_bot_api.leave_room(event.source.room_id)
-        else:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text="この会話から退出させることはできません"))
-
-    # ユーザからビーコンの設定を行う
-    elif text in {'beacon', 'ビーコン'}:
-        beacon_whisper_event.config_beacon_msg(event)
-    elif text in {"help", "ヘルプ"}:
-        reply(help_msg())
-    elif text in {'またね', 'じゃあね', 'バイバイ'}:
-        reply(plant_animator.disconnect(event))
-
-    # 植物の生成を行う
-    elif split_msg[0] in {'登録', 'ようこそ'}:
-        if len(split_msg) == 2:
-            name = split_msg[1]
-            reply(plant_animator.register_plant(name))
-        elif len(split_msg) == 1:
-            reply("名前が設定されていません")
-        else:
-            reply(("メッセージが不正です", "例：登録 `植物の名前`"))
-
-    # 植物との接続命令
-    elif split_msg[0] in {'ハロー', 'hello', 'こんにちは', 'こんばんは', 'おはよう', 'ごきげんよう'}:
-        if len(split_msg) == 2:
-            reply(plant_animator.connect(split_msg[1], event)) 
-        elif len(split_msg) == 1:
-            reply("植物が選択されていません")
-        else:
-            reply(("メッセージが不正です：", "例：ハロー `植物の名前`"))
-
-    # 植物を削除するときの命令
-    elif split_msg[0] == {'削除'}:
-        if len(split_msg) == 2:
-            reply(plant_animator.delete_plant(split_msg[1]))
-        elif len(split_msg) == 1:
-            reply("植物が選択されていません")
-        else:
-            reply(("メッセージが不正です：" , "例：削除 `植物の名前`"))
-
-    # 植物を削除するときの命令
-        # if split_msg[1] is not None:        
-        #     confirm_template = ConfirmTemplate(text= split_msg[1] +"の情報を削除します\n本当によろしいですか？\n", actions=[
-        #         PostbackAction(label='Yes', data='delete_plant '+ split_msg[1], displayText='はい'),
-        #         PostbackAction(label='No', data='delete_plant_cancel '+ split_msg[1], displayText='いいえ'),
-        #     ])
-        #     template_message = TemplateSendMessage(
-        #         alt_text='Confirm alt text', template=confirm_template)
-        #     line_bot_api.reply_message(event.reply_token, template_message)
-        # else:
-        #     line_bot_api.reply_message(
-        #         event.reply_token,
-        #         TextSendMessage(
-        #             text='植物が選択されていません'
-        #         )
-        #     )
+    if reply_text is None:
+        pass
     else:
-        msg = plant_animator.communicate(text, event)
-        if msg is None:
-            reply(["誰ともお話ししていません", help_msg()])
-        else:
-            reply(msg)
+        line_bot_api.reply_message()
+    # # 返信を行います
+    # # 引数がNoneの場合は何も行いません
+    # def reply(msgs):
+    #     if msgs is None:
+    #         pass
+    #     elif not isinstance(msgs, (list, tuple)):
+    #         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=msgs))
+    #     else:
+    #         line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=msg) for msg in msgs])
+
+    # lines = (
+    #         "植物の呼び出し", "  ハロー `植物の名前`",
+    #         "植物の登録:", "　登録 `植物の名前`",
+    #         "植物の削除", "　削除 `植物の名前`",
+    #         "会話の終了", '　またね')
+
+    # def help_msg():        
+    #     return os.linesep.join(lines)
+    # # ユーザIDの取得
+    
+    # # 送られてきた言葉が植物の名前だった場合は、それをキャッシュし「なに？」と返す
+    # # if user_data.plant_exists(text):
+    # #     current_plant = text
+    # #     line_bot_api.reply_message(
+    # #         event.reply_token, TextSendMessage(text='なに？'))
+    
+    # # まずは現在アクティベートされている植物に対してCommunicateを投げる
+    # # 追記：先にcommunicateするのは拙い。システム処理に関する言葉も植物に投げられることになる
+    # # plant_animator.communicate(text, event)
+
+    # if text == 'bye':
+    #     if isinstance(event.source, SourceGroup):
+    #         line_bot_api.reply_message(
+    #             event.reply_token, TextSendMessage(text='またね、今までありがとう'))
+    #         line_bot_api.leave_group(event.source.group_id)
+    #     elif isinstance(event.source, SourceRoom):
+    #         line_bot_api.reply_message(
+    #             event.reply_token, TextSendMessage(text='またね、今までありがとう'))
+    #         line_bot_api.leave_room(event.source.room_id)
+    #     else:
+    #         line_bot_api.reply_message(
+    #             event.reply_token,
+    #             TextSendMessage(text="この会話から退出させることはできません"))
+
+    # # ユーザからビーコンの設定を行う
+    # elif text in {'beacon', 'ビーコン'}:
+    #     beacon_whisper_event.config_beacon_msg(event)
+    # elif text in {"help", "ヘルプ"}:
+    #     reply(help_msg())
+    # elif text in {'またね', 'じゃあね', 'バイバイ'}:
+    #     reply(plant_animator.disconnect(event))
+
+    # # 植物の生成を行う
+    # elif split_msg[0] in {'登録', 'ようこそ'}:
+    #     if len(split_msg) == 2:
+    #         name = split_msg[1]
+    #         reply(plant_animator.register_plant(name))
+    #     elif len(split_msg) == 1:
+    #         reply("名前が設定されていません")
+    #     else:
+    #         reply(("メッセージが不正です", "例：登録 `植物の名前`"))
+
+    # # 植物との接続命令
+    # elif split_msg[0] in {'ハロー', 'hello', 'こんにちは', 'こんばんは', 'おはよう', 'ごきげんよう'}:
+    #     if len(split_msg) == 2:
+    #         reply(plant_animator.connect(split_msg[1], event)) 
+    #     elif len(split_msg) == 1:
+    #         reply("植物が選択されていません")
+    #     else:
+    #         reply(("メッセージが不正です：", "例：ハロー `植物の名前`"))
+
+    # # 植物を削除するときの命令
+    # elif split_msg[0] == {'削除'}:
+    #     if len(split_msg) == 2:
+    #         reply(plant_animator.delete_plant(split_msg[1]))
+    #     elif len(split_msg) == 1:
+    #         reply("植物が選択されていません")
+    #     else:
+    #         reply(("メッセージが不正です：" , "例：削除 `植物の名前`"))
+
+    # # 植物を削除するときの命令
+    #     # if split_msg[1] is not None:        
+    #     #     confirm_template = ConfirmTemplate(text= split_msg[1] +"の情報を削除します\n本当によろしいですか？\n", actions=[
+    #     #         PostbackAction(label='Yes', data='delete_plant '+ split_msg[1], displayText='はい'),
+    #     #         PostbackAction(label='No', data='delete_plant_cancel '+ split_msg[1], displayText='いいえ'),
+    #     #     ])
+    #     #     template_message = TemplateSendMessage(
+    #     #         alt_text='Confirm alt text', template=confirm_template)
+    #     #     line_bot_api.reply_message(event.reply_token, template_message)
+    #     # else:
+    #     #     line_bot_api.reply_message(
+    #     #         event.reply_token,
+    #     #         TextSendMessage(
+    #     #             text='植物が選択されていません'
+    #     #         )
+    #     #     )
+    # else:
+    #     msg = plant_animator.communicate(text, event)
+    #     if msg is None:
+    #         reply(["誰ともお話ししていません", help_msg()])
+    #     else:
+    #         reply(msg)
         
-        # line_bot_api.reply_message(
-        #     event.reply_token, TextSendMessage(text=event.message.text))
+    #     # line_bot_api.reply_message(
+    #     #     event.reply_token, TextSendMessage(text=event.message.text))
 
 
 
