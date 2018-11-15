@@ -23,9 +23,8 @@ class ExampleResponce(SpeechCenter):
         elif user_text in self.examples:
             return self.examples[user_text](plant)
         else:
-            ret = "%s: "
-            ret += sample_one(" ..?", "なに言っているの？", "よくわかんないや")
-            return ret % plant.display_name
+            ret = sample_one("..？", なに言っているの？", "よくわかんないや")
+            return ret 
 
     def report_weather_forecast(self, postal_code):
         weather = WeatherForecast.get_weather(postal_code)

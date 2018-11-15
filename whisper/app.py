@@ -389,11 +389,10 @@ def launch_request_handler(clova_request):
 
 @clova.handle.default
 def no_response(clova_request):
+    text = plant_animator.communicate("hogehoge")
     if plant_animator.connecting():
-        text = "%s よくわかんないや" % plant_animator.plant.display_name
-    else:
-        text = "ごめんなさい、認識できませんでした"
-
+        text = "%s: よくわかんないや" % plant_animator.plant.display_name
+        
     return clova.response(text)
 
 
