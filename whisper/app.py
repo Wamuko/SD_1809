@@ -429,6 +429,7 @@ def define_clova_handler(intent, text):
     def handler(clova_request):
         # バグがあるかもしれない
         # textの形式次第で
+        print("clova intent = %s" % intent)
         msg = create_reply([text], source="clova")
        # msg = plant_animator.communicate(text, None)
         if msg is None:
