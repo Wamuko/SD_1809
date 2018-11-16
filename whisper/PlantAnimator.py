@@ -3,6 +3,7 @@
 また、そのほかのシステム的な機能を担います
 """
 from datetime import datetime
+import ResponseDict
 
 from linebot.models import (
     MessageEvent,
@@ -86,7 +87,11 @@ class PlantAnimator:
         if self.connecting():
             return self.__plant.chat(text)
         else:
-            return "誰ともお話ししてないよ"
+            resp = ResponseDict.Instance
+            if text in resp.WhoAreYou:
+                return resp.IamWhisper
+            else:
+                return resp.NobodySpeaking
 
     # ユーザがビーコンの近くかつ、コンフィグ設定がOnの時に呼ばれます
     def listen_beacon(self, beacon_config):

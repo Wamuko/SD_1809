@@ -1,5 +1,6 @@
 import numpy as np
 from WeatherForecast import WeatherForecast
+from ResponseDict import Instance as R
 from Plant import Plant
 import random
 
@@ -41,6 +42,9 @@ class ExampleResponce(SpeechCenter):
 
     def respond_see_you(self, plant: Plant):
         return sample_one(  "またね", "じゃあね", "バイバイ") 
+
+    def make_self_introduce(self, plant: Plant):
+        return sample_one(*R.IamPlant) % plant.display_name
 
     @staticmethod
     def respond_health(plant : Plant):

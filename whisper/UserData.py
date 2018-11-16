@@ -2,6 +2,7 @@
 import json
 import os
 import collections as cl
+import ResponseDict
 from Plant import Plant
 from SpeechCenter import ExampleResponce
 from SensorBuffer import SensorBuffer
@@ -104,6 +105,7 @@ class UserData:
         ex["調子はどう？"] = kls.respond_health
         ex["水はいる？"] = kls.respond_water_demand
         ex["日当たりはどう？"] = kls.respond_light_demand
+
         # ex["気温はどう？"] = kls.respond_temperture
 
         res = Plant(json_object["name"], json_object["display_name"],
