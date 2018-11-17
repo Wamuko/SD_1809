@@ -293,6 +293,8 @@ def create_reply(split_text, event=None, source=None):
     input: string[]
     output: None or iterable<string>
     """
+    def decorate_text(plant, text):
+        return plant.display_name + ": " + text
 
     text = split_text[0]
     if text == 'bye':
@@ -312,10 +314,16 @@ def create_reply(split_text, event=None, source=None):
     # ユーザからビーコンの設定を行う
     elif text in {'beacon', 'ビーコン'}:
         return beacon_whisper_event.config_beacon_msg(event)
+        
     elif text in {"help", "ヘルプ"}:
         return help_msg
+
     elif text in {'またね', 'じゃあね', 'バイバイ'}:
-        return plant_animator.disconnect()
+        text = plant_animator.disconnect()
+        if source == "text":
+            text = decorate_text(plant_animator.plant, text)
+        
+        return text 
 
     # 植物の生成を行う
     elif text in {'登録', 'ようこそ'}:
@@ -329,14 +337,18 @@ def create_reply(split_text, event=None, source=None):
 
     # ランダムに呼び出す
     elif text == "誰かを呼んで":
-        return plant_animator.clova_random_connect()
+        reply = plant_animator.clova_random_connect()
+        if source == "text":
+            reply = decorate_text(plant_animator.plant, reply) 
+        
+        return reply
 
     # 植物との接続命令
     elif split_text[0] in {'ハロー', 'hello', 'こんにちは', 'こんばんは', 'おはよう', 'ごきげんよう'}:
         if len(split_text) == 2:
             reply = plant_animator.connect(split_text[1])
             if source == "text":
-                reply = plant_animator.plant.display_name + ": " + reply
+                reply = decorate_text(plant_animator.plant, reply)
             
             return reply
 
@@ -374,7 +386,7 @@ def create_reply(split_text, event=None, source=None):
         text = plant_animator.communicate(text)
         if source == "text":
             if plant_animator.connecting():
-                text = plant_animator.plant.display_name + ": " + text 
+                text = decorate_text(plant_animator.plant, text) 
             else:
                 text = [text, help_msg]
 
