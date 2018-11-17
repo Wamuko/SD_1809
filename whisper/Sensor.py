@@ -8,7 +8,7 @@ DISCARD = range(20)
 DEFAULT_HUMIDITY = 700
 DEFAULT_LUMINOSITY = 50
 
-ser = serial.Serial("/dev/ttyUSB0", 9600)
+ser = serial.Serial("/dev/ttyUSB_whisper", 9600)
 print(ser)
 
 

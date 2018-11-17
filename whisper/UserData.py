@@ -2,6 +2,7 @@
 import json
 import os
 import collections as cl
+from ResponseDict import Instance as R
 from Plant import Plant
 from SpeechCenter import ExampleResponce
 from SensorBuffer import SensorBuffer
@@ -93,6 +94,10 @@ class UserData:
         with open(name, 'w', encoding="utf-8") as fw:
             json.dump(ys, fw, indent=4)
 
+    def list_plant_name(self):
+        return tuple(self.plants.keys())
+
+        
     def __create_plant(self, json_object):
         kls = ExampleResponce
         center = ExampleResponce()
@@ -100,7 +105,10 @@ class UserData:
         ex["調子はどう？"] = kls.respond_health
         ex["水はいる？"] = kls.respond_water_demand
         ex["日当たりはどう？"] = kls.respond_light_demand
-        ex["気温はどう？"] = kls.respond_temperture
+
+        for text in R.WhoAreYou:
+            ex[text] = kls.make_self_introduce
+        # ex["気温はどう？"] = kls.respond_temperture
 
         res = Plant(json_object["name"], json_object["display_name"],
                     SensorBuffer(), center, json_object["water_threshold"],

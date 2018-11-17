@@ -1,5 +1,5 @@
 {
-    "user_id":"",
+    "user_id":"U70418518785e805318db128d8014710e",
     "postal_code": "980-0871",
     "use_line_beacon": 0,
     "plants": {
@@ -26,6 +26,14 @@
             "luminosity_threshold": 700,
             "temperture_min_relax": 15,
             "temperture_max_relax": 30
+        },
+        "ガーベラ":{
+            "display_name":"ガーベラ",
+            "name" : "ガーベラ",
+            "water_threshold" : 650,
+            "luminosity_threshold" : 700,
+            "temperture_min_relax":15,
+            "temperture_max_relax":30
         }
     }
 }

@@ -17,6 +17,7 @@ class PseudoPlant(Plant):
     def needLuminesity(self):
         return self.dark
 
+<<<<<<< HEAD
 
 import SpeechCenter 
 
@@ -33,5 +34,8 @@ ex["気温はどう？"] = kls.respond_temperture
 plant = PseudoPlant(dis_name, name, center)
 
 
+=======
+        
+>>>>>>> Clova
 
     

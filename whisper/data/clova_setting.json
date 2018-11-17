@@ -1,0 +1,10 @@
+{
+    "intent_text_dict":{
+        "AskWater" : "水はいる？",
+        "AskLuminous" : "日当たりはどう？",
+        "AskStatus" : "調子はどう？",
+        "ConnectPlant" : "誰かを呼んで",
+        "DisconnectPlant": "またね", 
+        "WhoAreYou" : "君は誰？"
+    }
+}

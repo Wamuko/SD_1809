@@ -1,7 +1,11 @@
 import numpy as np
 from WeatherForecast import WeatherForecast
+from ResponseDict import Instance as R
 from Plant import Plant
+import random
 
+def sample_one(*args):
+    return random.sample(args, 1)[0]
 
 class SpeechCenter:
     def make_response(self, plant):
@@ -20,7 +24,8 @@ class ExampleResponce(SpeechCenter):
         elif user_text in self.examples:
             return self.examples[user_text](plant)
         else:
-            return "%s: ..?" % plant.display_name
+            ret = sample_one("..？", "なに言っているの？", "よくわかんないや")
+            return ret 
 
     def report_weather_forecast(self, postal_code):
         weather = WeatherForecast.get_weather(postal_code)
@@ -30,17 +35,22 @@ class ExampleResponce(SpeechCenter):
             return "今日はあまり天気が良くないね"
 
     def say_nice_to_meet_you(self, plant: Plant):
-        return "%s: はじめまして!" % plant.display_name
+        return "はじめまして!"
 
     def say_hello(self, plant: Plant):
-        return "%s: なに？" % plant.display_name
+        return sample_one( "なに？", "呼んだ？") 
 
     def respond_see_you(self, plant: Plant):
-        return "%s: またね" % plant.display_name
+        return sample_one(  "またね", "じゃあね", "バイバイ") 
 
     @staticmethod
-    def respond_health(plant):
+    def make_self_introduce(plant: Plant):
+        return sample_one(*R.IamPlant) % plant.display_name
+
+    @staticmethod
+    def respond_health(plant : Plant):
         response_msg = ""
+        plant.sense_condition()
         need_water = plant.needWater()
         need_light = plant.needLuminesity()
         if need_water:
@@ -58,21 +68,23 @@ class ExampleResponce(SpeechCenter):
 
     @staticmethod
     def respond_water_demand(plant):
+        plant.sense_condition()
         response_msg = ""
         if plant.needWater():
-            response_msg += "水が欲しいよ！"
+            response_msg += sample_one("水が欲しいよ！", "うん！", "のどが渇いたな")
         else:
-            response_msg += "もう十分だよ"
+            response_msg += sample_one("もう十分だよ", "いらないよー", "大丈夫だよ、ありがとう")
 
         return response_msg
 
     @staticmethod
     def respond_light_demand(plant):
         response_msg = ""
+        plant.sense_condition()
         if plant.needLuminesity():
-            response_msg += "少し暗いかな"
+            response_msg += sample_one("少し暗いかな", "明るいところに行きたいな", "光が欲しいよ")
         else:
-            response_msg += "ちょうどいいよ！"
+            response_msg += sample_one("ちょうどいいよ！", "気持ちいいよ！", "十分だよ")
 
         return response_msg
 

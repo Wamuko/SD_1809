@@ -3,6 +3,7 @@
 また、そのほかのシステム的な機能を担います
 """
 from datetime import datetime
+import ResponseDict
 
 from linebot.models import (
     MessageEvent,
@@ -14,6 +15,7 @@ from linebot import (
     LineBotApi,
     WebhookHandler,
 )
+import random
 
 
 class PlantAnimator:
@@ -50,37 +52,46 @@ class PlantAnimator:
         return msg
 
     # 要求された名前から対応する植物を再生します
-    def connect(self, name, event):
+    def connect(self, name, event=None):
         new_plant = self.user_data.reanimate_plant(name)
         if new_plant is None:
             return "その名前の植物はいないよ"
         else:
+            print("connect %s" % new_plant.display_name)
             new_plant.push_message = self.push_message
             self.__plant = new_plant
             return new_plant.say_hello()
 
     # 植物との接続を切断します
-    def disconnect(self, event=None):
-        if not self.connecting() and event is not None:
+    def disconnect(self):
+        if not self.connecting():
             return "誰ともお話ししてないよ"
         else:
+            print("disconnect")
             pl = self.__plant
             self.__plant = None
-            if event is not None:
-                return pl.say_see_you()
-            else:
-                return None
+            return pl.say_see_you()
+            
 
     # 植物と接続しているか確認します
     def connecting(self):
         return self.__plant is not None
 
+    # Clovaに呼ばれたときにランダムに接続を行う
+    def clova_random_connect(self):
+        return self.connect(random.choice(self.user_data.list_plant_name()))
+        
+
     # Lineのテキストを植物に伝え、応答を受け取ります
-    def communicate(self, text, event):
+    def communicate(self, text):
         if self.connecting():
             return self.__plant.chat(text)
         else:
-            return None
+            resp = ResponseDict.Instance
+            if text in resp.WhoAreYou:
+                return resp.IamWhisper
+            else:
+                return resp.NobodySpeaking
 
     # ユーザがビーコンの近くかつ、コンフィグ設定がOnの時に呼ばれます
     def listen_beacon(self, beacon_config):
