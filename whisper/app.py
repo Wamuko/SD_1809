@@ -140,7 +140,6 @@ def handle_text_message(event):
     print("text message")
     text = event.message.text
     split_msg = re.split('[\ |　]', text)
-    # split_msg = text.split(' ')
     reply_texts = create_reply(split_msg, event, source="text") 
 
     if reply_texts is not None:
@@ -335,7 +334,12 @@ def create_reply(split_text, event=None, source=None):
     # 植物との接続命令
     elif split_text[0] in {'ハロー', 'hello', 'こんにちは', 'こんばんは', 'おはよう', 'ごきげんよう'}:
         if len(split_text) == 2:
-            return plant_animator.connect(split_text[1])
+            reply = plant_animator.connect(split_text[1])
+            if source == "text":
+                reply = plant_animator.plant.display_name + ": " + reply
+            
+            return reply
+
         elif len(split_text) == 1:
             return "植物が選択されていません"
         else:
