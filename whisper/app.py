@@ -314,14 +314,15 @@ def create_reply(split_text, event=None, source=None):
     # ユーザからビーコンの設定を行う
     elif text in {'beacon', 'ビーコン'}:
         return beacon_whisper_event.config_beacon_msg(event)
-        
+
     elif text in {"help", "ヘルプ"}:
         return help_msg
 
     elif text in {'またね', 'じゃあね', 'バイバイ'}:
+        plant = plant_animator.plant
         text = plant_animator.disconnect()
         if source == "text":
-            text = decorate_text(plant_animator.plant, text)
+            text = decorate_text(plant, text)
         
         return text 
 
